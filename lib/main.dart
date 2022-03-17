@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import 'dashboard/dashboard.dart';
+import 'dashboard/dashboard_binding.dart';
 
 void main() {
   runApp(const MyApp());
@@ -9,17 +13,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
+    return GetMaterialApp(
       title: 'Life Saviour',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Life Saviour'),
-        ),
-      ),
+      initialRoute: "/",
+      getPages: [
+        GetPage(
+          name: "/",
+          page: () => const DashBoard(),
+          binding: BindingDashBoard(),
+        )
+      ],
     );
   }
 }
