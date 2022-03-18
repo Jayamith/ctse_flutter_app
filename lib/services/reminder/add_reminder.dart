@@ -162,7 +162,7 @@ class _AddReminderState extends State<AddReminder> {
           colorText: Colors.red,
           icon: const Icon(
             Icons.warning_amber_rounded,
-            color: Colors.red,
+            color: Colors.redAccent,
           ));
     }
   }
