@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'Life Saviour',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        backgroundColor: Colors.white,
         primarySwatch: Colors.blue,
       ),
       initialRoute: "/",
