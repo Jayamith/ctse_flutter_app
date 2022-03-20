@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 import 'dashboard/dashboard.dart';
 import 'dashboard/dashboard_binding.dart';
+import 'db/db_helper.dart';
 
-void main() {
+Future<void> main() async {
+  await DBHelper.initDb();
+  await GetStorage.init();
   runApp(const MyApp());
 }
 
