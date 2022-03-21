@@ -1,7 +1,10 @@
+import 'package:ctse_app_life_saviour/controllers/reminder_controller.dart';
 import 'package:ctse_app_life_saviour/services/reminder/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+
+import '../../models/reminder_model.dart';
 
 class AddReminder extends StatefulWidget {
   const AddReminder({Key? key}) : super(key: key);
@@ -11,8 +14,10 @@ class AddReminder extends StatefulWidget {
 }
 
 class _AddReminderState extends State<AddReminder> {
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
+  TextEditingController titleController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  BatteryReminderController reminderController =
+      Get.put(BatteryReminderController());
   DateTime _selectedDate = DateTime.now();
   String _startTime = DateFormat("hh:mm a").format(DateTime.now()).toString();
   String _endTime = "12:00 AM";
@@ -30,6 +35,24 @@ class _AddReminderState extends State<AddReminder> {
         ),
         backgroundColor: Colors.cyanAccent,
       ),
+      floatingActionButton: FloatingActionButton(
+        // When the user presses the button, show an alert dialog containing
+        // the text that the user has entered into the text field.
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                // Retrieve the text the that user has entered by using the
+                // TextEditingController.
+                content: Text(titleController.text),
+              );
+            },
+          );
+        },
+        tooltip: 'Show me the value!',
+        child: const Icon(Icons.text_fields),
+      ),
       body: Container(
         padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
         child: SingleChildScrollView(
@@ -39,12 +62,12 @@ class _AddReminderState extends State<AddReminder> {
               InputField(
                 title: "Title",
                 hint: "Enter your title",
-                controller: _titleController,
+                controller: titleController,
               ),
               InputField(
                 title: "Description",
                 hint: "Enter your description",
-                controller: _descriptionController,
+                controller: descriptionController,
               ),
               InputField(
                 title: "Date",
@@ -150,12 +173,13 @@ class _AddReminderState extends State<AddReminder> {
   }
 
   _validateData() {
-    if (_titleController.text.isNotEmpty &&
-        _descriptionController.text.isNotEmpty) {
+    if (titleController.text.isNotEmpty &&
+        descriptionController.text.isNotEmpty) {
       //Save Data
+      _saveDataToDB();
       Get.back();
-    } else if (_titleController.text.isEmpty ||
-        _descriptionController.text.isEmpty) {
+    } else if (titleController.text.isEmpty ||
+        descriptionController.text.isEmpty) {
       Get.snackbar("Required", "All fields are required",
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.blue[50],
@@ -165,6 +189,21 @@ class _AddReminderState extends State<AddReminder> {
             color: Colors.redAccent,
           ));
     }
+  }
+
+  _saveDataToDB() async {
+    int value = await reminderController.addReminder(
+        reminder: Reminder(
+      title: titleController.text,
+      description: descriptionController.text,
+      date: DateFormat.yMd().format(_selectedDate),
+      startTime: _startTime,
+      endTime: _endTime,
+      remindMe: _remindTime,
+      repeat: _repeat,
+      isCompleted: 0,
+    ));
+    print("My ID is " + "$value");
   }
 
   _getSelectedDate() async {
