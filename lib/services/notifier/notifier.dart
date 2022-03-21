@@ -26,7 +26,7 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
         _batteryState = state;
       });
     });
-  }
+  } 
 
   @override
   Widget build(BuildContext context) {
