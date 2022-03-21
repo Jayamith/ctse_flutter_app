@@ -7,13 +7,13 @@ class InputField extends StatelessWidget {
   final TextEditingController? controller;
   final Widget? widget;
 
-  const InputField(
-      {Key? key,
-      required this.title,
-      required this.hint,
-      this.controller,
-      this.widget})
-      : super(key: key);
+  const InputField({
+    Key? key,
+    required this.title,
+    required this.hint,
+    this.controller,
+    this.widget,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +38,7 @@ class InputField extends StatelessWidget {
                     child: TextFormField(
                   readOnly: widget == null ? false : true,
                   autofocus: false,
+                  controller: controller,
                   style: GoogleFonts.lato(
                       textStyle: TextStyle(
                           fontSize: 15,
