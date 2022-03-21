@@ -31,6 +31,15 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Center(
+          child: Text(
+            "Battery Notifier",
+            style: TextStyle(color: Colors.black),
+          ),
+        ),
+        backgroundColor: Colors.redAccent,
+      ),
       body: Center(
         child: Text('$_batteryState'),
       ),
@@ -57,7 +66,7 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
       ),
     );
   }
-  
+
   @override
   void dispose() {
     super.dispose();
