@@ -57,6 +57,7 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
       ),
     );
   }
+  
   @override
   void dispose() {
     super.dispose();
