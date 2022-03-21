@@ -20,7 +20,7 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
   @override
   void initState() {
     super.initState();
-    _battertyStateSubscription = 
+    _battertyStateSubscription =
         _battery.onBatteryStateChanged.listen((BatteryState state) {
       setState(() {
         _batteryState = state;
@@ -58,7 +58,7 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
                   },
                   child: const Text('OK'),
                 )
-              ], 
+              ],
             ),
           );
         },
