@@ -8,7 +8,19 @@ class BatteryReminderController extends GetxController {
     super.onReady();
   }
 
+  var reminderList = <Reminder>[].obs;
+
   Future<int> addReminder({Reminder? reminder}) async {
     return await DBHelper.insert(reminder);
+  }
+
+  void getReminders() async {
+    List<Map<String, dynamic>> reminders = await DBHelper.getData();
+    reminderList
+        .assignAll(reminders.map((data) => Reminder.fromJson(data)).toList());
+  }
+
+  void delete(Reminder reminder) {
+    DBHelper.delete(reminder);
   }
 }
