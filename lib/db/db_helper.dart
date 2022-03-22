@@ -36,4 +36,14 @@ class DBHelper {
     print('insert function called');
     return await _database?.insert(_tableNameReminder, reminder!.toJson()) ?? 1;
   }
+
+  static Future<List<Map<String, dynamic>>> getData() async {
+    print('get function called');
+    return await _database!.query(_tableNameReminder);
+  }
+
+  static delete(Reminder reminder) async {
+    return await _database!
+        .delete(_tableNameReminder, where: 'id=?', whereArgs: [reminder.id]);
+  }
 }
