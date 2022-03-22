@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
 import '../services/history/history_controller.dart';
-import '../services/notifier/notifier_controller.dart';
+import '../controllers/notifier_controller.dart';
 import '../services/optimizer/optimizer_controller.dart';
 import '../controllers/reminder_controller.dart';
 import 'dashboard_controller.dart';

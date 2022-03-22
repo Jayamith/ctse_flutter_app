@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 import '../navigation_bar/custom_navigation_bar.dart';
 import '../services/history/history.dart';
-import '../services/notifier/notifier.dart';
+import '../services/notifier/notifiers.dart';
 import '../services/optimizer/optimizer.dart';
 import '../services/reminder/reminder.dart';
 import 'dashboard_controller.dart';
