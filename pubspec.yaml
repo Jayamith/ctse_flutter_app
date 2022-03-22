@@ -43,7 +43,6 @@ dependencies:
   flutter_staggered_animations:
   date_picker_timeline:
   sqflite:
-  battery_plus: ^2.1.3
 dev_dependencies:
   flutter_test:
     sdk: flutter
