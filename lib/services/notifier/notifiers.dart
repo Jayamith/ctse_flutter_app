@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'package:ctse_app_life_saviour/controllers/notifier_controller.dart';
 import 'package:battery_plus/battery_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 class BatteryNotifier extends StatefulWidget {
   const BatteryNotifier({Key? key, this.title}) : super(key: key);
@@ -26,7 +29,7 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
         _batteryState = state;
       });
     });
-  } 
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,10 +43,38 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
         ),
         backgroundColor: Colors.redAccent,
       ),
-      body: Center(
-        child: Text('$_batteryState'),
-      ),
+      body: Column(children: [
+        Row(
+          children: [
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 110, vertical: 45),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    DateFormat.yMMMd().format(DateTime.now()),
+                    style: GoogleFonts.poppins(
+                        textStyle: const TextStyle(
+                            fontSize: 26, fontWeight: FontWeight.bold)),
+                  ),
+                  Container(
+                      margin: const EdgeInsets.symmetric(vertical: 25),
+                      child: Text(
+                        '$_batteryState',
+                        style: GoogleFonts.ubuntu(
+                            textStyle: const TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                        )),
+                      )),
+                ],
+              ),
+            )
+          ],
+        )
+      ]),
       floatingActionButton: FloatingActionButton(
+        //onPressed: () => Get.to(const AddReminder()),
         onPressed: () async {
           final batteryLevel = await _battery.batteryLevel;
 
@@ -62,7 +93,7 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
             ),
           );
         },
-        child: const Icon(Icons.battery_unknown),
+        child: const Icon(Icons.add_comment_rounded),
       ),
     );
   }
