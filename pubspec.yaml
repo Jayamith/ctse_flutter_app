@@ -41,7 +41,6 @@ dependencies:
   intl: null
   flutter_staggered_animations:
   sqflite: null
-  flutter_staggered_animations: any
   path_provider: any
 
 dev_dependencies:
