@@ -1,4 +1,3 @@
-import 'package:ctse_app_life_saviour/controllers/add_reminder_controller.dart';
 import 'package:get/get.dart';
 
 import '../services/history/history_controller.dart';
@@ -16,7 +15,5 @@ class BindingDashBoard extends Bindings {
         fenix: true);
     Get.lazyPut<BatteryOptimizerController>(() => BatteryOptimizerController());
     Get.lazyPut<BatteryHistoryController>(() => BatteryHistoryController());
-    Get.lazyPut<AddReminderController>(() => AddReminderController(),
-        fenix: true);
   }
 }
