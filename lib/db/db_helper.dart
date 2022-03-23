@@ -1,3 +1,4 @@
+import 'package:ctse_app_life_saviour/models/historyModel.dart';
 import 'package:ctse_app_life_saviour/models/reminder_model.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -5,6 +6,7 @@ class DBHelper {
   static Database? _database;
   static const int _version = 1;
   static const String _tableNameReminder = "reminders";
+  static const String _tableNameHistory = "history";
 
   static Future<void> initDb() async {
     if (_database != null) {
@@ -17,13 +19,20 @@ class DBHelper {
         version: _version,
         onCreate: (db, version) {
           print("Creating New Database");
-          return db.execute(
+          db.execute(
             "CREATE TABLE $_tableNameReminder("
             "id INTEGER PRIMARY KEY AUTOINCREMENT, "
             "title STRING, description TEXT, date STRING, "
             "startTime STRING, endTime STRING, "
             "isCompleted INTEGER, remindMe INTEGER, "
             "repeat STRING)",
+          );
+          db.execute('''
+          CREATE TABLE $_tableNameHistory (
+          id INTEGER PRIMARY KEY AUTOINCREMENT, 
+          level TEXT,
+          pluggedTime STRING
+          )'''
           );
         },
       );
@@ -45,5 +54,9 @@ class DBHelper {
   static delete(Reminder reminder) async {
     return await _database!
         .delete(_tableNameReminder, where: 'id=?', whereArgs: [reminder.id]);
+  }
+
+  static Future<int?> insertHistory(History history) async {
+    return await _database?.insert(_tableNameHistory, history.toMap());
   }
 }
