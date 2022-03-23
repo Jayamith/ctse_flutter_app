@@ -39,6 +39,7 @@ dependencies:
   get_storage: null
   google_fonts: null
   intl: null
+  flutter_staggered_animations:
   sqflite: null
 
 dev_dependencies:

@@ -42,6 +42,14 @@ class DBHelper {
     return await _database!.query(_tableNameReminder);
   }
 
+  static update(int id) async {
+    return await _database!.rawUpdate('''
+    UPDATE reminders
+    SET isCompleted = ?
+    WHERE id = ?
+    ''', [1, id]);
+  }
+
   static delete(Reminder reminder) async {
     return await _database!
         .delete(_tableNameReminder, where: 'id=?', whereArgs: [reminder.id]);
