@@ -57,19 +57,9 @@ class DBHelper {
     return await _database?.insert(_tableNameReminder, reminder!.toJson()) ?? 1;
   }
 
-  static Future<int> insertNotifier(Notifier? notifier) async {
-    print('insert function called');
-    return await _database?.insert(_tableNameNotifier, notifier!.toJson()) ?? 1;
-  }
-
   static Future<List<Map<String, dynamic>>> getData() async {
     print('get function called');
     return await _database!.query(_tableNameReminder);
-  }
-
-  static Future<List<Map<String, dynamic>>> GetNotifier() async {
-    print('get function called');
-    return await _database!.query(_tableNameNotifier);
   }
 
   static delete(Reminder reminder) async {
@@ -77,12 +67,20 @@ class DBHelper {
         .delete(_tableNameReminder, where: 'id=?', whereArgs: [reminder.id]);
   }
 
+  static Future<int?> insertHistory(History history) async {
+    return await _database?.insert(_tableNameHistory, history.toMap());
+  }
+
+  static Future<int> insertNotifier(Notifier? notifier) async {
+    return await _database?.insert(_tableNameNotifier, notifier!.toJson()) ?? 1;
+  }
+
+  static Future<List<Map<String, dynamic>>> getNotifier() async {
+    return await _database!.query(_tableNameNotifier);
+  }
+
   static deleteNotifier(Notifier notifier) async {
     return await _database!
         .delete(_tableNameNotifier, where: 'id=?', whereArgs: [notifier.id]);
-  }
-
-  static Future<int?> insertHistory(History history) async {
-    return await _database?.insert(_tableNameHistory, history.toMap());
   }
 }
