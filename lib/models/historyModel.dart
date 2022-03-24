@@ -7,7 +7,7 @@ class History {
 
   History({this.id, this.level, this.pluggedTime});
 
-  History.fromMap(Map<String, dynamic> map) {
+  History.fromMap(Map<dynamic, dynamic> map) {
     id = map[colId];
     level = map[colLevel];
     pluggedTime = map[colPluggedTime];
