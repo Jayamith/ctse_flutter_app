@@ -36,8 +36,7 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
       infoandroid = batteryInfo;
       batteryLevel = infoandroid!.batteryLevel.toString();
       chargingstatus = infoandroid!.chargingStatus!;
-      setState(() {
-      });
+      setState(() {});
     });
     super.initState();
   }
@@ -55,8 +54,8 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
         backgroundColor: Colors.redAccent,
       ),
       body: Container(
-          
-          color: chargingstatus == ChargingStatus.Charging || parseInt(batteryLevel) > 20
+          color: chargingstatus == ChargingStatus.Charging ||
+                  parseInt(batteryLevel) > 20
               ? Color.fromARGB(255, 3, 145, 10)
               : Color.fromARGB(255, 243, 45, 45),
           alignment: Alignment.center,
@@ -80,28 +79,8 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
             ],
           )),
       floatingActionButton: FloatingActionButton(
-        //onPressed: () => Get.to(const AddReminder()),
-        onPressed: () async {
-          //final batteryLevel = await _battery.batteryLevel;
-
-          showDialog<void>(
-            context: context,
-            builder: (_) => AlertDialog(
-              content: Text('Battery: $batteryLevel%'),
-              actions: <Widget>[
-                //if (batteryLevel < 20 && BatteryState.discharging == true)
-                const Text("Low Battery"),
-
-                //const Text("Good to go"),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text('OK'),
-                )
-              ],
-            ),
-          );
+        onPressed: () async => {
+          await Get.to(() => const AddReminder()),
         },
         child: const Icon(Icons.add_comment_rounded),
       ),
@@ -111,5 +90,4 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
 
 parseInt(String batteryLevel) {
   return int.parse(batteryLevel);
-  
 }

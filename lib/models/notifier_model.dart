@@ -2,6 +2,7 @@ class Notifier {
   String? id;
   String? status;
   String? level;
+  int? isCompleted;
   int? remindMe;
   String? repeat;
 
@@ -9,6 +10,7 @@ class Notifier {
     {this.id,
       this.status,
       this.level,
+      this.isCompleted,
       this.remindMe,
       this.repeat});
 
@@ -16,6 +18,7 @@ class Notifier {
     id = json['id'];
     status = json['status'];
     level = json['level'];
+    isCompleted = json['isCompleted'];
     remindMe = json['remindMe'];
     repeat = json['repeat'];
   }
@@ -25,6 +28,7 @@ class Notifier {
     data['id'] = id;
     data['status'] = status;
     data['level'] = level;
+    data['isCompleted'] = isCompleted;
     data['remindMe'] = remindMe;
     data['repeat'] = repeat;
     return data;
