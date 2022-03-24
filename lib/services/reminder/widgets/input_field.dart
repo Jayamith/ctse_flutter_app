@@ -24,6 +24,9 @@ class InputField extends StatelessWidget {
         children: [
           Text(
             title,
+            style: GoogleFonts.oswald(
+                textStyle:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
           ),
           Container(
             margin: const EdgeInsets.only(top: 10),
@@ -41,7 +44,7 @@ class InputField extends StatelessWidget {
                   controller: controller,
                   style: GoogleFonts.lato(
                       textStyle: TextStyle(
-                          fontSize: 15,
+                          fontSize: 18,
                           fontWeight: FontWeight.w400,
                           color: Colors.grey[600])),
                   decoration: InputDecoration(
