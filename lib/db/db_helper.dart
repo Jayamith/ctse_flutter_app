@@ -41,8 +41,9 @@ class DBHelper {
           db.execute(
             "CREATE TABLE $_tableNameNotifier("
             "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-            "BatteryLevel STRING, isCompleted INTEGER,"
-            " remindMe INTEGER, repeat STRING)",
+            "status STRING, level STRING, "
+            "isCompleted INTEGER, remindMe INTEGER, "
+            "repeat STRING)",
           );
         },
       );
