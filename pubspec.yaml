@@ -37,10 +37,10 @@ dependencies:
   flutter_native_timezone: null
   get: null
   get_storage: null
-  google_fonts: null
   intl: null
   flutter_staggered_animations:
   sqflite: null
+  google_fonts:
   path_provider: any
 
 dev_dependencies:
