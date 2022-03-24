@@ -62,13 +62,31 @@ class DBHelper {
     return await _database!.query(_tableNameReminder);
   }
 
+  static update(int id) async {
+    return await _database!.rawUpdate('''
+    UPDATE reminders
+    SET isCompleted = ?
+    WHERE id = ?
+    ''', [1, id]);
+  }
+
   static delete(Reminder reminder) async {
     return await _database!
         .delete(_tableNameReminder, where: 'id=?', whereArgs: [reminder.id]);
   }
 
   static Future<int?> insertHistory(History history) async {
-    return await _database?.insert(_tableNameHistory, history.toMap());
+    int? id = await _database?.insert(_tableNameHistory, history.toMap());
+    print('History inserted with ID:' + id.toString());
+    return id;
+  }
+
+  static Future<List<History>?> fetchHistory() async {
+    List<Map> histories = await _database!.query(_tableNameHistory);
+    print('History data retrieved:' + histories.length.toString());
+    return histories.length == 0
+        ? []
+        : histories.map((e) => History.fromMap(e)).toList();
   }
 
   static Future<int> insertNotifier(Notifier? notifier) async {

@@ -20,7 +20,13 @@ class BatteryReminderController extends GetxController {
         .assignAll(reminders.map((data) => Reminder.fromJson(data)).toList());
   }
 
+  void updateStatus(int id) async {
+    await DBHelper.update(id);
+    getReminders();
+  }
+
   void delete(Reminder reminder) {
     DBHelper.delete(reminder);
+    getReminders();
   }
 }

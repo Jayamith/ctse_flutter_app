@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:ctse_app_life_saviour/db/db_helper.dart';
 import 'package:ctse_app_life_saviour/models/historyModel.dart';
 import 'package:flutter/material.dart';
 import 'package:battery_plus/battery_plus.dart';
@@ -16,18 +17,41 @@ class _BatteryHistoryState extends State<BatteryHistory> {
   final Battery _battery = Battery();
 
   BatteryState? _batteryState;
-  List<History> _historyList = [History(id: 1, level: '90', pluggedTime: DateTime.now())];
+  List<History> _historyList = [];
   StreamSubscription<BatteryState>? _battertyStateSubscription;
 
   @override
   void initState() {
     super.initState();
+    _refreshHistory();
     _battertyStateSubscription =
-        _battery.onBatteryStateChanged.listen((BatteryState state) {
+        _battery.onBatteryStateChanged.listen((BatteryState state) async {
           setState(() {
             _batteryState = state;
           });
+          // trigger
+          if (state == BatteryState.charging) {
+            await Future.delayed(Duration(seconds: 1));
+            int tmpLevel = await _battery.batteryLevel;
+            String tmpPluggedTime = DateTime.now().year.toString()+"-"+DateTime.now().month.toString()+"-"+DateTime.now().day.toString();
+            History history = History(level: tmpLevel.toString(), pluggedTime: tmpPluggedTime);
+            _saveLevel(history);
+            _refreshHistory();
+          } else {
+
+          }
         });
+  }
+
+  _saveLevel(History history) async{
+    await DBHelper.insertHistory(history);
+  }
+
+  _refreshHistory() async {
+    List<History>? x = await DBHelper.fetchHistory();
+    setState(() {
+      _historyList = x!;
+    });
   }
 
   @override
@@ -71,7 +95,7 @@ class _BatteryHistoryState extends State<BatteryHistory> {
                         color: Colors.blue, fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
-                      "${_historyList[index].pluggedTime?.year}-${_historyList[index].pluggedTime?.month}-${_historyList[index].pluggedTime?.day}"
+                      "${_historyList[index].pluggedTime}"
                   ),
                 ),
                 Divider(
