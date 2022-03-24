@@ -61,4 +61,12 @@ class DBHelper {
     print('History inserted with ID:' + id.toString());
     return id;
   }
+
+  static Future<List<History>?> fetchHistory() async {
+    List<Map> histories = await _database!.query(_tableNameHistory);
+    print('History data retrieved:' + histories.length.toString());
+    return histories.length == 0
+        ? []
+        : histories.map((e) => History.fromMap(e)).toList();
+  }
 }

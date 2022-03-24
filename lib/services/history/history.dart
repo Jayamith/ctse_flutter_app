@@ -17,23 +17,26 @@ class _BatteryHistoryState extends State<BatteryHistory> {
   final Battery _battery = Battery();
 
   BatteryState? _batteryState;
-  List<History> _historyList = [History(id: 1, level: '90', pluggedTime: DateTime.now().year.toString()+"-"+DateTime.now().month.toString()+"-"+DateTime.now().day.toString())];
+  List<History> _historyList = [];
   StreamSubscription<BatteryState>? _battertyStateSubscription;
 
   @override
   void initState() {
     super.initState();
-    // _dbHelper = DBHelper();
+    _refreshHistory();
     _battertyStateSubscription =
-        _battery.onBatteryStateChanged.listen((BatteryState state) {
+        _battery.onBatteryStateChanged.listen((BatteryState state) async {
           setState(() {
             _batteryState = state;
           });
           // trigger
           if (state == BatteryState.charging) {
+            await Future.delayed(Duration(seconds: 1));
+            int tmpLevel = await _battery.batteryLevel;
             String tmpPluggedTime = DateTime.now().year.toString()+"-"+DateTime.now().month.toString()+"-"+DateTime.now().day.toString();
-            History history = History(level: _battery.batteryLevel.toString(), pluggedTime: tmpPluggedTime);
+            History history = History(level: tmpLevel.toString(), pluggedTime: tmpPluggedTime);
             _saveLevel(history);
+            _refreshHistory();
           } else {
 
           }
@@ -42,6 +45,13 @@ class _BatteryHistoryState extends State<BatteryHistory> {
 
   _saveLevel(History history) async{
     await DBHelper.insertHistory(history);
+  }
+
+  _refreshHistory() async {
+    List<History>? x = await DBHelper.fetchHistory();
+    setState(() {
+      _historyList = x!;
+    });
   }
 
   @override
