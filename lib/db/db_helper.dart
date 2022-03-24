@@ -57,6 +57,8 @@ class DBHelper {
   }
 
   static Future<int?> insertHistory(History history) async {
-    return await _database?.insert(_tableNameHistory, history.toMap());
+    int? id = await _database?.insert(_tableNameHistory, history.toMap());
+    print('History inserted with ID:' + id.toString());
+    return id;
   }
 }
