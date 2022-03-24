@@ -15,7 +15,7 @@ class History {
 
   int? id;
   String? level;
-  DateTime? pluggedTime;
+  String? pluggedTime;
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic> {colLevel: level, colPluggedTime: pluggedTime};
