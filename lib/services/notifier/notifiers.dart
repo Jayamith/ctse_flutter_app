@@ -1,34 +1,45 @@
 import 'dart:async';
+import 'package:battery_info/enums/charging_status.dart';
 import 'package:ctse_app_life_saviour/controllers/notifier_controller.dart';
-import 'package:battery_plus/battery_plus.dart';
+import 'package:battery_info/battery_info_plugin.dart';
+import 'package:battery_info/model/android_battery_info.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 class BatteryNotifier extends StatefulWidget {
-  const BatteryNotifier({Key? key, this.title}) : super(key: key);
-
-  final String? title;
+  const BatteryNotifier({Key? key}) : super(key: key);
 
   @override
   _BatteryNotifierState createState() => _BatteryNotifierState();
 }
 
 class _BatteryNotifierState extends State<BatteryNotifier> {
-  final Battery _battery = Battery();
-
-  BatteryState? _batteryState;
-  StreamSubscription<BatteryState>? _battertyStateSubscription;
+  String batteryLevel = "";
+  ChargingStatus chargingstatus = ChargingStatus.Discharging;
 
   @override
   void initState() {
-    super.initState();
-    _battertyStateSubscription =
-        _battery.onBatteryStateChanged.listen((BatteryState state) {
+    AndroidBatteryInfo? infoandroid = AndroidBatteryInfo();
+
+    Future.delayed(Duration.zero, () async {
+      infoandroid = await BatteryInfoPlugin().androidBatteryInfo;
+
+      batteryLevel = infoandroid!.batteryLevel.toString();
+      chargingstatus = infoandroid!.chargingStatus!;
+      setState(() {});
+    });
+
+    BatteryInfoPlugin()
+        .androidBatteryInfoStream
+        .listen((AndroidBatteryInfo? batteryInfo) {
+      infoandroid = batteryInfo;
+      batteryLevel = infoandroid!.batteryLevel.toString();
+      chargingstatus = infoandroid!.chargingStatus!;
       setState(() {
-        _batteryState = state;
       });
     });
+    super.initState();
   }
 
   @override
@@ -43,46 +54,45 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
         ),
         backgroundColor: Colors.redAccent,
       ),
-      body: Column(children: [
-        Row(
-          children: [
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 110, vertical: 45),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    DateFormat.yMMMd().format(DateTime.now()),
-                    style: GoogleFonts.poppins(
-                        textStyle: const TextStyle(
-                            fontSize: 26, fontWeight: FontWeight.bold)),
-                  ),
-                  Container(
-                      margin: const EdgeInsets.symmetric(vertical: 25),
-                      child: Text(
-                        '$_batteryState',
-                        style: GoogleFonts.ubuntu(
-                            textStyle: const TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                        )),
-                      )),
-                ],
+      body: Container(
+          
+          color: chargingstatus == ChargingStatus.Charging || parseInt(batteryLevel) > 20
+              ? Color.fromARGB(255, 3, 145, 10)
+              : Color.fromARGB(255, 243, 45, 45),
+          alignment: Alignment.center,
+          padding: const EdgeInsets.all(10),
+          margin: const EdgeInsets.all(10),
+          height: 120,
+          child: Column(
+            children: [
+              Text(
+                DateFormat.yMMMd().format(DateTime.now()),
+                style: GoogleFonts.poppins(
+                    textStyle: const TextStyle(
+                        fontSize: 26, fontWeight: FontWeight.bold)),
               ),
-            )
-          ],
-        )
-      ]),
+              Text(
+                "Battery Level: $batteryLevel %",
+                style: const TextStyle(fontSize: 20),
+              ),
+              Text(chargingstatus.toString(),
+                  style: const TextStyle(fontSize: 20)),
+            ],
+          )),
       floatingActionButton: FloatingActionButton(
         //onPressed: () => Get.to(const AddReminder()),
         onPressed: () async {
-          final batteryLevel = await _battery.batteryLevel;
+          //final batteryLevel = await _battery.batteryLevel;
 
           showDialog<void>(
             context: context,
             builder: (_) => AlertDialog(
               content: Text('Battery: $batteryLevel%'),
               actions: <Widget>[
+                //if (batteryLevel < 20 && BatteryState.discharging == true)
+                const Text("Low Battery"),
+
+                //const Text("Good to go"),
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context);
@@ -97,10 +107,9 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
       ),
     );
   }
+}
 
-  @override
-  void dispose() {
-    super.dispose();
-    _battertyStateSubscription?.cancel();
-  }
+parseInt(String batteryLevel) {
+  return int.parse(batteryLevel);
+  
 }
