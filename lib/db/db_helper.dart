@@ -36,19 +36,14 @@ class DBHelper {
           id INTEGER PRIMARY KEY AUTOINCREMENT, 
           level TEXT,
           pluggedTime STRING
-<<<<<<< HEAD
-          )'''
-          );
+          )''');
           db.execute(
             "CREATE TABLE $_tableNameNotifier("
             "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-            "status STRING, level STRING, "
+            "level STRING, "
             "isCompleted INTEGER, remindMe INTEGER, "
             "repeat STRING)",
           );
-=======
-          )''');
->>>>>>> 6a26eb0e78204f6b9e3597a7c74dee4fa81953b6
         },
       );
     } catch (e) {
@@ -67,7 +62,7 @@ class DBHelper {
   }
 
   static update(int id) async {
-    return await _database!.rawUpdate('''
+    return await _database!.rawUpdate(''';
     UPDATE reminders
     SET isCompleted = ?
     WHERE id = ?
@@ -101,11 +96,6 @@ class DBHelper {
     return await _database!.query(_tableNameNotifier);
   }
 
-  static deleteNotifier(Notifier notifier) async {
-    return await _database!
-        .delete(_tableNameNotifier, where: 'id=?', whereArgs: [notifier.id]);
-  }
-
   static updateNotifier(int id) async {
     return await _database!.rawUpdate('''
     UPDATE notifiers
@@ -113,4 +103,11 @@ class DBHelper {
     WHERE id = ?
     ''', [1, id]);
   }
+
+  static deleteNotifier(Notifier notifier) async {
+    return await _database!
+        .delete(_tableNameNotifier, where: 'id=?', whereArgs: [notifier.id]);
+  }
+
+  
 }
