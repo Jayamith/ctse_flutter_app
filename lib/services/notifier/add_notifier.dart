@@ -2,7 +2,6 @@ import 'package:ctse_app_life_saviour/controllers/notifier_controller.dart';
 import 'package:ctse_app_life_saviour/services/notifier/widgets/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import '../../models/notifier_model.dart';
 
 class AddNotifier extends StatefulWidget {

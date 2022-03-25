@@ -35,18 +35,6 @@ class NotificationDetail extends StatelessWidget {
                   ),
                 ],
               ),
-              Row(children: [
-                Expanded(
-                  child: Text(
-                    "Remind Time : ${label.toString().split("|")[1]}",
-                    style: const TextStyle(
-                        fontSize: 20,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                ],
-              ),
             ],
           ),    
         ),
