@@ -15,7 +15,6 @@ class AddReminder extends StatefulWidget {
 
 class _AddReminderState extends State<AddReminder> {
   TextEditingController titleController = TextEditingController();
-  TextEditingController descriptionController = TextEditingController();
   BatteryReminderController reminderController =
       Get.put(BatteryReminderController());
   DateTime _selectedDate = DateTime.now();
@@ -33,7 +32,7 @@ class _AddReminderState extends State<AddReminder> {
           "Add Reminder",
           style: TextStyle(color: Colors.black),
         ),
-        backgroundColor: Colors.cyanAccent,
+        backgroundColor: Colors.blue,
       ),
       body: Container(
         padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
@@ -46,11 +45,6 @@ class _AddReminderState extends State<AddReminder> {
                 hint: "Enter your title",
                 controller: titleController,
               ),
-              /*InputField(
-                title: "Description",
-                hint: "Enter your description",
-                controller: descriptionController,
-              ),*/
               const SizedBox(
                 height: 10,
               ),
@@ -85,25 +79,35 @@ class _AddReminderState extends State<AddReminder> {
                   ),
                   Center(
                     child: Container(
-                      margin: const EdgeInsets.only(top: 35),
-                      child: const Icon(
-                        Icons.doorbell_outlined,
-                        color: Colors.blue,
-                        size: 45,
+                      margin: const EdgeInsets.only(top: 45),
+                      child: GestureDetector(
+                        onTap: () {
+                          Get.defaultDialog(
+                            radius: 20.0,
+                            title: "Reminder Time Info",
+                            middleText: "You Will Be Notified At This Time!",
+                            textConfirm: "Okay",
+                            confirm: OutlinedButton.icon(
+                              onPressed: () => Get.back(),
+                              icon: const Icon(
+                                Icons.check,
+                                color: Colors.green,
+                              ),
+                              label: const Text(
+                                "Okay",
+                                style: TextStyle(color: Colors.green),
+                              ),
+                            ),
+                          );
+                        },
+                        child: const Icon(
+                          Icons.notification_important,
+                          color: Colors.blue,
+                          size: 45,
+                        ),
                       ),
                     ),
                   ),
-                  /*Expanded(
-                      child: InputField(
-                    hint: _endTime,
-                    title: 'End Time',
-                    widget: IconButton(
-                      onPressed: () {
-                        _getSelectedTime(isStartTime: false);
-                      },
-                      icon: const Icon(Icons.access_time_outlined),
-                    ),
-                  ))*/
                 ],
               ),
               const SizedBox(
@@ -141,11 +145,33 @@ class _AddReminderState extends State<AddReminder> {
                   ),
                   Center(
                     child: Container(
-                      margin: const EdgeInsets.only(top: 35),
-                      child: const Icon(
-                        Icons.battery_charging_full,
-                        color: Colors.blue,
-                        size: 45,
+                      margin: const EdgeInsets.only(top: 45),
+                      child: GestureDetector(
+                        onTap: () {
+                          Get.defaultDialog(
+                            radius: 10.0,
+                            title: "Battery Level Info",
+                            middleText:
+                                "You Will Be Notified If Battery Level Is Lower Than This!",
+                            textConfirm: "Okay",
+                            confirm: OutlinedButton.icon(
+                              onPressed: () => Get.back(),
+                              icon: const Icon(
+                                Icons.check,
+                                color: Colors.green,
+                              ),
+                              label: const Text(
+                                "Okay",
+                                style: TextStyle(color: Colors.green),
+                              ),
+                            ),
+                          );
+                        },
+                        child: const Icon(
+                          Icons.battery_charging_full,
+                          color: Colors.blue,
+                          size: 45,
+                        ),
                       ),
                     ),
                   ),
@@ -204,12 +230,12 @@ class _AddReminderState extends State<AddReminder> {
       Get.back();
     } else if (titleController.text.isEmpty) {
       Get.snackbar("Required", "All fields are required",
-          snackPosition: SnackPosition.BOTTOM,
+          snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.blue[50],
           colorText: Colors.red,
           icon: const Icon(
             Icons.warning_amber_rounded,
-            color: Colors.redAccent,
+            color: Colors.red,
           ));
     }
   }
@@ -218,10 +244,8 @@ class _AddReminderState extends State<AddReminder> {
     int value = await reminderController.addReminder(
         reminder: Reminder(
       title: titleController.text,
-      //description: descriptionController.text,
       date: DateFormat.yMd().format(_selectedDate),
       startTime: _startTime,
-      //endTime: _endTime,
       remindMe: _remindTime,
       repeat: _repeat,
       isCompleted: 0,
