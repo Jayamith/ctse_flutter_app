@@ -94,5 +94,5 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
 }
 
 parseInt(String batteryLevel) {
-  return int.parse(batteryLevel);
+  return parseInt(batteryLevel);
 }
