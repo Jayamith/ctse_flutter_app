@@ -40,14 +40,9 @@ dependencies:
   get: null
   get_storage: null
   intl: null
-<<<<<<< HEAD
-=======
-  flutter_staggered_animations:
   sqflite: null
   google_fonts:
->>>>>>> 6a26eb0e78204f6b9e3597a7c74dee4fa81953b6
   path_provider: any
-  sqflite: null
 
 dev_dependencies:
   flutter_launcher_icons: ^0.9.2
