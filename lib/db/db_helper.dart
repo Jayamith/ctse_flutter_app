@@ -26,8 +26,8 @@ class DBHelper {
           db.execute(
             "CREATE TABLE $_tableNameReminder("
             "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-            "title STRING, description TEXT, date STRING, "
-            "startTime STRING, endTime STRING, "
+            "title STRING, date STRING, "
+            "startTime STRING, "
             "isCompleted INTEGER, remindMe INTEGER, "
             "repeat STRING)",
           );
@@ -36,6 +36,7 @@ class DBHelper {
           id INTEGER PRIMARY KEY AUTOINCREMENT, 
           level TEXT,
           pluggedTime STRING
+<<<<<<< HEAD
           )'''
           );
           db.execute(
@@ -45,6 +46,9 @@ class DBHelper {
             "isCompleted INTEGER, remindMe INTEGER, "
             "repeat STRING)",
           );
+=======
+          )''');
+>>>>>>> 6a26eb0e78204f6b9e3597a7c74dee4fa81953b6
         },
       );
     } catch (e) {

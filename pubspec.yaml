@@ -39,8 +39,13 @@ dependencies:
   flutter_staggered_animations: any
   get: null
   get_storage: null
-  google_fonts: null
   intl: null
+<<<<<<< HEAD
+=======
+  flutter_staggered_animations:
+  sqflite: null
+  google_fonts:
+>>>>>>> 6a26eb0e78204f6b9e3597a7c74dee4fa81953b6
   path_provider: any
   sqflite: null
 

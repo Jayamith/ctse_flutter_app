@@ -21,10 +21,10 @@ class _AddReminderState extends State<AddReminder> {
   DateTime _selectedDate = DateTime.now();
   String _startTime = DateFormat("hh:mm a").format(DateTime.now()).toString();
   String _endTime = "12:00 AM";
-  int _remindTime = 5;
-  List<int> remindList = [5, 10, 15, 20, 25, 30];
-  String _repeat = "None";
-  List<String> repeatList = ["None", "Daily", "Weekly", "Monthly"];
+  int _remindTime = 50;
+  List<int> remindList = [5, 10, 25, 50, 75, 90];
+  String _repeat = "Once";
+  List<String> repeatList = ["Once", "Daily"];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,24 +34,6 @@ class _AddReminderState extends State<AddReminder> {
           style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.cyanAccent,
-      ),
-      floatingActionButton: FloatingActionButton(
-        // When the user presses the button, show an alert dialog containing
-        // the text that the user has entered into the text field.
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                // Retrieve the text the that user has entered by using the
-                // TextEditingController.
-                content: Text(titleController.text),
-              );
-            },
-          );
-        },
-        tooltip: 'Show me the value!',
-        child: const Icon(Icons.text_fields),
       ),
       body: Container(
         padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
@@ -64,10 +46,13 @@ class _AddReminderState extends State<AddReminder> {
                 hint: "Enter your title",
                 controller: titleController,
               ),
-              InputField(
+              /*InputField(
                 title: "Description",
                 hint: "Enter your description",
                 controller: descriptionController,
+              ),*/
+              const SizedBox(
+                height: 10,
               ),
               InputField(
                 title: "Date",
@@ -79,12 +64,15 @@ class _AddReminderState extends State<AddReminder> {
                   icon: const Icon(Icons.calendar_month_outlined),
                 ),
               ),
+              const SizedBox(
+                height: 10,
+              ),
               Row(
                 children: [
                   Expanded(
                       child: InputField(
                     hint: _startTime,
-                    title: 'Start Time',
+                    title: 'Remind Time',
                     widget: IconButton(
                       onPressed: () {
                         _getSelectedTime(isStartTime: true);
@@ -93,9 +81,19 @@ class _AddReminderState extends State<AddReminder> {
                     ),
                   )),
                   const SizedBox(
-                    width: 10,
+                    width: 20,
                   ),
-                  Expanded(
+                  Center(
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 35),
+                      child: const Icon(
+                        Icons.doorbell_outlined,
+                        color: Colors.blue,
+                        size: 45,
+                      ),
+                    ),
+                  ),
+                  /*Expanded(
                       child: InputField(
                     hint: _endTime,
                     title: 'End Time',
@@ -105,29 +103,56 @@ class _AddReminderState extends State<AddReminder> {
                       },
                       icon: const Icon(Icons.access_time_outlined),
                     ),
-                  ))
+                  ))*/
                 ],
               ),
-              InputField(
-                title: "Remind Me",
-                hint: "$_remindTime minutes early",
-                widget: DropdownButton(
-                  icon: const Icon(Icons.keyboard_arrow_down_rounded),
-                  iconSize: 32,
-                  elevation: 6,
-                  underline: Container(
-                    height: 0,
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: InputField(
+                      title: "Remind Me",
+                      hint: "$_remindTime" + "%",
+                      widget: DropdownButton(
+                        icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                        iconSize: 32,
+                        elevation: 6,
+                        underline: Container(
+                          height: 0,
+                        ),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _remindTime = int.parse(newValue!);
+                          });
+                        },
+                        items: remindList
+                            .map<DropdownMenuItem<String>>((int value) {
+                          return DropdownMenuItem<String>(
+                              value: value.toString(),
+                              child: Text(value.toString()));
+                        }).toList(),
+                      ),
+                    ),
                   ),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _remindTime = int.parse(newValue!);
-                    });
-                  },
-                  items: remindList.map<DropdownMenuItem<String>>((int value) {
-                    return DropdownMenuItem<String>(
-                        value: value.toString(), child: Text(value.toString()));
-                  }).toList(),
-                ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Center(
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 35),
+                      child: const Icon(
+                        Icons.battery_charging_full,
+                        color: Colors.blue,
+                        size: 45,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 10,
               ),
               InputField(
                 title: "Repeat",
@@ -173,13 +198,11 @@ class _AddReminderState extends State<AddReminder> {
   }
 
   _validateData() {
-    if (titleController.text.isNotEmpty &&
-        descriptionController.text.isNotEmpty) {
+    if (titleController.text.isNotEmpty) {
       //Save Data
       _saveDataToDB();
       Get.back();
-    } else if (titleController.text.isEmpty ||
-        descriptionController.text.isEmpty) {
+    } else if (titleController.text.isEmpty) {
       Get.snackbar("Required", "All fields are required",
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.blue[50],
@@ -195,10 +218,10 @@ class _AddReminderState extends State<AddReminder> {
     int value = await reminderController.addReminder(
         reminder: Reminder(
       title: titleController.text,
-      description: descriptionController.text,
+      //description: descriptionController.text,
       date: DateFormat.yMd().format(_selectedDate),
       startTime: _startTime,
-      endTime: _endTime,
+      //endTime: _endTime,
       remindMe: _remindTime,
       repeat: _repeat,
       isCompleted: 0,

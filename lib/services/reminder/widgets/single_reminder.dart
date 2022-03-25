@@ -18,7 +18,7 @@ class SingleReminder extends StatelessWidget {
         //  width: SizeConfig.screenWidth * 0.78,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          color: Colors.blueGrey,
+          color: Colors.black45,
         ),
         child: Row(children: [
           Expanded(
@@ -29,7 +29,7 @@ class SingleReminder extends StatelessWidget {
                   reminder?.title ?? "",
                   style: GoogleFonts.lato(
                     textStyle: const TextStyle(
-                        fontSize: 16,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Colors.white),
                   ),
@@ -43,23 +43,28 @@ class SingleReminder extends StatelessWidget {
                     Icon(
                       Icons.access_time_rounded,
                       color: Colors.grey[200],
-                      size: 18,
+                      size: 22,
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: 8),
                     Text(
-                      "${reminder!.startTime} - ${reminder!.endTime}",
+                      "${reminder!.startTime}",
                       style: GoogleFonts.lato(
-                        textStyle:
-                            TextStyle(fontSize: 13, color: Colors.grey[100]),
+                        textStyle: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.grey[100]),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  reminder?.description ?? "",
+                  "Minimum Battery Level : ${reminder?.remindMe.toString()}%",
                   style: GoogleFonts.lato(
-                    textStyle: TextStyle(fontSize: 15, color: Colors.grey[100]),
+                    textStyle: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey[200]),
                   ),
                 ),
               ],
@@ -68,21 +73,27 @@ class SingleReminder extends StatelessWidget {
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 10),
             height: 60,
-            width: 0.5,
+            width: 1,
             color: Colors.grey[200]!.withOpacity(0.7),
           ),
-          RotatedBox(
+          /* RotatedBox(
             quarterTurns: 3,
             child: Text(
-              reminder!.isCompleted == 1 ? "COMPLETED" : "TODO",
+              reminder!.isCompleted == 1 ? "NOTED" : "WAITING",
               style: GoogleFonts.lato(
                 textStyle: const TextStyle(
-                    fontSize: 10,
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: Colors.white),
               ),
             ),
-          ),
+          ),*/
+          Icon(
+            reminder!.isCompleted == 1 ? Icons.done_all : Icons.pending_actions,
+            size: 30,
+            color:
+                reminder!.isCompleted == 1 ? Colors.green[800] : Colors.orange,
+          )
         ]),
       ),
     );

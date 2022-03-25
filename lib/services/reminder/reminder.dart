@@ -1,5 +1,9 @@
+import 'dart:async';
+
+import 'package:battery_plus/battery_plus.dart';
 import 'package:ctse_app_life_saviour/controllers/reminder_controller.dart';
 import 'package:ctse_app_life_saviour/services/reminder/add_reminder.dart';
+import 'package:ctse_app_life_saviour/services/reminder/reminder_notification_service.dart';
 import 'package:ctse_app_life_saviour/services/reminder/widgets/single_reminder.dart';
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
@@ -18,15 +22,44 @@ class BatteryReminder extends StatefulWidget {
 }
 
 class _BatteryReminderState extends State<BatteryReminder> {
+  final Battery battery = Battery();
+  int batteryPercentage = 100;
+  late Timer timer;
+  var notificationHelper;
   DateTime _selectedDate = DateTime.now();
   final _reminderController = Get.put(BatteryReminderController());
+
+  @override
+  void initState() {
+    super.initState();
+    listenBatteryLevel();
+    notificationHelper = NotificationHelper();
+    notificationHelper.initializeNotification();
+    notificationHelper.requestIOSPermissions();
+  }
+
+  void listenBatteryLevel() {
+    updateBatteryLevel();
+    /*timer = Timer.periodic(
+      const Duration(seconds: 5),
+      (_) async => updateBatteryLevel(),
+    );*/
+  }
+
+  Future updateBatteryLevel() async {
+    final bLevel = await battery.batteryLevel;
+    setState(() {
+      batteryPercentage = bLevel;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Center(
           child: Text(
-            "Battery Reminder",
+            "Battery Scheduler",
             style: TextStyle(color: Colors.black),
           ),
         ),
@@ -43,58 +76,67 @@ class _BatteryReminderState extends State<BatteryReminder> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async => {
-          await Get.to(() => const AddReminder()),
-          _reminderController.getReminders(),
-        },
-      ),
+          heroTag: 'addReminder',
+          onPressed: () async => {
+                await Get.to(
+                  () => const AddReminder(),
+                  transition: Transition.leftToRightWithFade,
+                  //duration: const Duration(seconds: 1)
+                ),
+                _reminderController.getReminders(),
+              },
+          child: const Icon(Icons.notification_add)),
     );
   }
 
   _displayToday() {
     return Row(
       children: [
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 100),
+        Expanded(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const SizedBox(
+                height: 20,
+              ),
               Text(
                 DateFormat.yMMMd().format(DateTime.now()),
-                style: GoogleFonts.pacifico(
+                style: GoogleFonts.bebasNeue(
                     textStyle: const TextStyle(
-                        fontSize: 28, fontWeight: FontWeight.bold)),
+                        fontSize: 28, fontWeight: FontWeight.w400)),
               ),
               Text(
                 "Today",
-                style: GoogleFonts.pacifico(
+                style: GoogleFonts.cinzel(
                     textStyle: const TextStyle(
-                        fontSize: 24, fontWeight: FontWeight.bold)),
+                        fontSize: 22, fontWeight: FontWeight.w600)),
               )
             ],
           ),
-        )
+        ),
       ],
     );
   }
 
   _displayDateSelector() {
     return Container(
-      margin: const EdgeInsets.only(top: 20, left: 10),
+      margin: const EdgeInsets.only(top: 10, left: 20),
       child: DatePicker(
         DateTime.now(),
         height: 100,
         width: 60,
         initialSelectedDate: DateTime.now(),
-        selectionColor: Colors.teal,
-        dayTextStyle: GoogleFonts.aladin(
-            textStyle: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-        )),
-        monthTextStyle: GoogleFonts.aBeeZee(
+        selectionColor: Colors.blue,
+        dayTextStyle: GoogleFonts.cinzel(
             textStyle: const TextStyle(
           fontSize: 14,
-          fontWeight: FontWeight.w400,
+          fontWeight: FontWeight.w600,
+        )),
+        monthTextStyle: GoogleFonts.neuton(
+            textStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
         )),
         onDateChange: (date) {
           setState(() {
@@ -113,8 +155,19 @@ class _BatteryReminderState extends State<BatteryReminder> {
             itemCount: _reminderController.reminderList.length,
             itemBuilder: (_, index) {
               Reminder reminder = _reminderController.reminderList[index];
-              print(reminder.toJson());
+              //print(reminder.toJson());
               if (reminder.repeat == 'Daily') {
+                DateTime date =
+                    DateFormat.jm().parse(reminder.startTime.toString());
+                var formattedTime = DateFormat("HH:mm").format(date);
+                //print(formattedTime);
+                if (batteryPercentage <
+                    int.parse(reminder.remindMe.toString())) {
+                  notificationHelper.scheduledNotification(
+                      int.parse(formattedTime.toString().split(":")[0]),
+                      int.parse(formattedTime.toString().split(":")[1]),
+                      reminder);
+                }
                 return AnimationConfiguration.staggeredGrid(
                     position: index,
                     columnCount: _reminderController.reminderList.length,
@@ -253,4 +306,10 @@ class _BatteryReminderState extends State<BatteryReminder> {
           ),
         ));
   }
+
+  /*@override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
+  }*/
 }
