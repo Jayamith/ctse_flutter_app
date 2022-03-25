@@ -13,14 +13,12 @@ class AddNotifier extends StatefulWidget {
 }
 
 class _AddNotifierState extends State<AddNotifier> {
-  TextEditingController titleController = TextEditingController();
-  TextEditingController descriptionController = TextEditingController();
   BatteryNotifierController notifierController =
       Get.put(BatteryNotifierController());
-  int _remindTime = 5;
-  List<int> remindList = [5, 10, 15, 20, 25, 30];
-  String _repeat = "None";
-  List<String> repeatList = ["None", "Daily", "Weekly", "Monthly"];
+  int batteryLevel = 20;
+  List<int> levelsList = [5, 10, 15, 20, 25, 30];
+  String _repeat = "Once";
+  List<String> repeatList = ["Once", "Daily"];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +27,7 @@ class _AddNotifierState extends State<AddNotifier> {
           "Add Notifier",
           style: TextStyle(color: Colors.black),
         ),
-        backgroundColor: Colors.cyanAccent,
+        backgroundColor: Colors.red,
       ),
       body: Container(
         padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
@@ -37,36 +35,72 @@ class _AddNotifierState extends State<AddNotifier> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              InputField(
-                title: "Title",
-                hint: "Enter your title",
-                controller: titleController,
-              ),
-              InputField(
-                title: "Description",
-                hint: "Enter your description",
-                controller: descriptionController,
-              ),
-              InputField(
-                title: "Remind Me",
-                hint: "$_remindTime minutes early",
-                widget: DropdownButton(
-                  icon: const Icon(Icons.keyboard_arrow_down_rounded),
-                  iconSize: 32,
-                  elevation: 6,
-                  underline: Container(
-                    height: 0,
+              Row(
+                children: [
+                  Expanded(
+                    child: InputField(
+                      title: "Battery Level",
+                      hint: "$batteryLevel%",
+                      widget: DropdownButton(
+                        icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                        iconSize: 32,
+                        elevation: 6,
+                        underline: Container(
+                          height: 0,
+                        ),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            batteryLevel = int.parse(newValue!);
+                          });
+                        },
+                        items: levelsList
+                            .map<DropdownMenuItem<String>>((int value) {
+                          return DropdownMenuItem<String>(
+                              value: value.toString(),
+                              child: Text(value.toString()));
+                        }).toList(),
+                      ),
+                    ),
                   ),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _remindTime = int.parse(newValue!);
-                    });
-                  },
-                  items: remindList.map<DropdownMenuItem<String>>((int value) {
-                    return DropdownMenuItem<String>(
-                        value: value.toString(), child: Text(value.toString()));
-                  }).toList(),
-                ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Center(
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 45),
+                      child: GestureDetector(
+                        onTap: () {
+                          Get.defaultDialog(
+                            radius: 10.0,
+                            title: "Battery Level Info",
+                            middleText:
+                                "You Will Be Notified If Battery Level Is Lower Than This!",
+                            textConfirm: "Okay",
+                            confirm: OutlinedButton.icon(
+                              onPressed: () => Get.back(),
+                              icon: const Icon(
+                                Icons.check,
+                                color: Colors.green,
+                              ),
+                              label: const Text(
+                                "Okay",
+                                style: TextStyle(color: Colors.green),
+                              ),
+                            ),
+                          );
+                        },
+                        child: const Icon(
+                          Icons.battery_charging_full,
+                          color: Colors.blue,
+                          size: 45,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 10,
               ),
               InputField(
                 title: "Repeat",
@@ -96,7 +130,7 @@ class _AddNotifierState extends State<AddNotifier> {
               Center(
                 child: ElevatedButton(
                   onPressed: () {
-                    _validateData();
+                    _saveDataToDB();
                   },
                   child: const Text(
                     "Create",
@@ -111,21 +145,13 @@ class _AddNotifierState extends State<AddNotifier> {
     );
   }
 
-  _validateData() {
-    if (titleController.text.isNotEmpty &&
-        descriptionController.text.isNotEmpty) {
-      //Save Data
-      Get.back();
-    } else if (titleController.text.isEmpty ||
-        descriptionController.text.isEmpty) {
-      Get.snackbar("Required", "All fields are required",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.blue[50],
-          colorText: Colors.red,
-          icon: const Icon(
-            Icons.warning_amber_rounded,
-            color: Colors.redAccent,
-          ));
-    }
+  _saveDataToDB() async {
+    int value = await notifierController.addNotifier(
+        notifier: Notifier(
+      level: batteryLevel,
+      repeat: _repeat,
+      isCompleted: 0,
+    ));
+    print("My ID is " + "$value");
   }
 }
