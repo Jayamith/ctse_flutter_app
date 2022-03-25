@@ -3,7 +3,9 @@ import 'package:battery_info/enums/charging_status.dart';
 import 'package:ctse_app_life_saviour/controllers/notifier_controller.dart';
 import 'package:battery_info/battery_info_plugin.dart';
 import 'package:battery_info/model/android_battery_info.dart';
+import 'package:ctse_app_life_saviour/services/notifier/add_notifier.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
@@ -15,6 +17,7 @@ class BatteryNotifier extends StatefulWidget {
 }
 
 class _BatteryNotifierState extends State<BatteryNotifier> {
+  final notifierController = Get.put(BatteryNotifierController());
   String batteryLevel = "";
   ChargingStatus chargingstatus = ChargingStatus.Discharging;
 
@@ -77,10 +80,12 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
               Text(chargingstatus.toString(),
                   style: const TextStyle(fontSize: 20)),
             ],
-          )),
+          )
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async => {
-          await Get.to(() => const AddReminder()),
+          await Get.to(() => const AddNotifier()),
+          notifierController.getNotifier(),
         },
         child: const Icon(Icons.add_comment_rounded),
       ),

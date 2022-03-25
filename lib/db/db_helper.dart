@@ -101,4 +101,12 @@ class DBHelper {
     return await _database!
         .delete(_tableNameNotifier, where: 'id=?', whereArgs: [notifier.id]);
   }
+
+  static updateNotifier(int id) async {
+    return await _database!.rawUpdate('''
+    UPDATE notifiers
+    SET isCompleted = ?
+    WHERE id = ?
+    ''', [1, id]);
+  }
 }
