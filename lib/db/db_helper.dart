@@ -1,12 +1,16 @@
 import 'package:ctse_app_life_saviour/models/historyModel.dart';
 import 'package:ctse_app_life_saviour/models/reminder_model.dart';
+import 'package:get/state_manager.dart';
 import 'package:sqflite/sqflite.dart';
+
+import '../models/notifier_model.dart';
 
 class DBHelper {
   static Database? _database;
   static const int _version = 1;
   static const String _tableNameReminder = "reminders";
   static const String _tableNameHistory = "history";
+  static const String _tableNameNotifier = "notifier";
 
   static Future<void> initDb() async {
     if (_database != null) {
@@ -33,6 +37,13 @@ class DBHelper {
           level TEXT,
           pluggedTime STRING
           )''');
+          db.execute(
+            "CREATE TABLE $_tableNameNotifier("
+            "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+            "level STRING, "
+            "isCompleted INTEGER, remindMe INTEGER, "
+            "repeat STRING)",
+          );
         },
       );
     } catch (e) {
@@ -51,7 +62,7 @@ class DBHelper {
   }
 
   static update(int id) async {
-    return await _database!.rawUpdate('''
+    return await _database!.rawUpdate(''';
     UPDATE reminders
     SET isCompleted = ?
     WHERE id = ?
@@ -76,4 +87,27 @@ class DBHelper {
         ? []
         : histories.map((e) => History.fromMap(e)).toList();
   }
+
+  static Future<int> insertNotifier(Notifier? notifier) async {
+    return await _database?.insert(_tableNameNotifier, notifier!.toJson()) ?? 1;
+  }
+
+  static Future<List<Map<String, dynamic>>> getNotifier() async {
+    return await _database!.query(_tableNameNotifier);
+  }
+
+  static updateNotifier(int id) async {
+    return await _database!.rawUpdate('''
+    UPDATE notifiers
+    SET isCompleted = ?
+    WHERE id = ?
+    ''', [1, id]);
+  }
+
+  static deleteNotifier(Notifier notifier) async {
+    return await _database!
+        .delete(_tableNameNotifier, where: 'id=?', whereArgs: [notifier.id]);
+  }
+
+  
 }
