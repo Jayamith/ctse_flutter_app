@@ -59,11 +59,11 @@ class _BatteryReminderState extends State<BatteryReminder> {
       appBar: AppBar(
         title: const Center(
           child: Text(
-            "Battery Scheduler",
+            "Reminder Scheduler",
             style: TextStyle(color: Colors.black),
           ),
         ),
-        backgroundColor: Colors.cyanAccent,
+        backgroundColor: Colors.blue,
       ),
       body: Column(
         children: [

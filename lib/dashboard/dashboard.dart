@@ -52,7 +52,7 @@ class _DashBoardState extends State<DashBoard> {
             BottomNavyBarItem(
               icon: const Icon(Icons.notification_add),
               title: const Text('Reminder'),
-              activeColor: Colors.cyan,
+              activeColor: Colors.blue,
               inactiveColor: _inactiveColor,
               textAlign: TextAlign.center,
             ),

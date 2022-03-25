@@ -21,10 +21,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Life Saviour',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        backgroundColor: Colors.white,
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(),
       initialRoute: "/",
       getPages: [
         GetPage(
