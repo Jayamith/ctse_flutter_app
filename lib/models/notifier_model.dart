@@ -1,23 +1,20 @@
 class Notifier {
-  String? id;
+  int? id;
   String? level;
   int? isCompleted;
   int? remindMe;
-  String? repeat;
 
   Notifier(
     {this.id,
       this.level,
       this.isCompleted,
-      this.remindMe,
-      this.repeat});
+      this.remindMe});
 
   Notifier.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     level = json['level'];
     isCompleted = json['isCompleted'];
     remindMe = json['remindMe'];
-    repeat = json['repeat'];
   }
 
   Map<String, dynamic> toJson() {
@@ -26,7 +23,6 @@ class Notifier {
     data['level'] = level;
     data['isCompleted'] = isCompleted;
     data['remindMe'] = remindMe;
-    data['repeat'] = repeat;
     return data;
   }
 }

@@ -89,14 +89,17 @@ class DBHelper {
   }
 
   static Future<int> insertNotifier(Notifier? notifier) async {
+    print('insert notifier function called');
     return await _database?.insert(_tableNameNotifier, notifier!.toJson()) ?? 1;
   }
 
   static Future<List<Map<String, dynamic>>> getNotifier() async {
+    print('get notifiers function called');
     return await _database!.query(_tableNameNotifier);
   }
 
   static updateNotifier(int id) async {
+    print('update notifier function called');
     return await _database!.rawUpdate('''
     UPDATE notifiers
     SET isCompleted = ?
@@ -105,9 +108,8 @@ class DBHelper {
   }
 
   static deleteNotifier(Notifier notifier) async {
+    print('delete notifier function called');
     return await _database!
         .delete(_tableNameNotifier, where: 'id=?', whereArgs: [notifier.id]);
   }
-
-  
 }
