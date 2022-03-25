@@ -117,7 +117,7 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
           itemBuilder: (_, index) {
             Notifier notifier = notifierController.notifierList[index];
             if (parseInt(batteryLevel) <
-                int.parse(notifier.remindMe.toString())) {
+                int.parse(notifier.level.toString())) {
               notificationHelper.scheduledNotification(
                   notifier
               );  

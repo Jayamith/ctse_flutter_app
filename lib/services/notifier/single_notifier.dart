@@ -24,19 +24,7 @@ class SingleNoifier extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  notifier?.level ?? "",
-                  style: GoogleFonts.poppins(
-                    textStyle: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
-                  ),
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-                Text(
-                  "Minimum Battery Level : ${notifier?.remindMe.toString()}%",
+                  "Minimum Battery Level : ${notifier?.level.toString()}%",
                   style: GoogleFonts.poppins(
                     textStyle: TextStyle(
                         fontSize: 16,

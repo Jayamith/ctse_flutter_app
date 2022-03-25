@@ -8,6 +8,7 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 class NotificationHelper {
+  String title = "";
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
@@ -46,20 +47,20 @@ class NotificationHelper {
   scheduledNotification(int hour, int minutes, Notifier notifier) async {
     await flutterLocalNotificationsPlugin.zonedSchedule(
       notifier.id!,
+      title = "Battery is Low. Connect Your charger",
       "Battery is less than ${notifier.level.toString()}%",
-      notifier.remindMe.toString(),
       _convertTime(hour, minutes),
-       //tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
-      const NotificationDetails(
-          android: AndroidNotificationDetails(
-        'your channel id',
-        'your channel name',
-      )),
+        const NotificationDetails(
+         android: AndroidNotificationDetails(
+           'your channel id',
+           'your channel name',
+        )),
       androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation:
+      uiLocalNotificationDateInterpretation: 
           UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
-      payload: "${notifier.level}|" + "${notifier.remindMe}",
+      payload: "$title|" +
+          "${notifier.level}",
     );
   }
 
