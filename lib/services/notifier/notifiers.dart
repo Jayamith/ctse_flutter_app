@@ -69,7 +69,7 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
       body: Container(
           color: chargingstatus == ChargingStatus.Charging ||
                   parseInt(batteryLevel) > 20
-              ? Colors.green[800]
+              ? Colors.lightGreen
               : Colors.red[900],
           alignment: Alignment.center,
           padding: const EdgeInsets.all(10),
@@ -84,11 +84,11 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
                         fontSize: 26, fontWeight: FontWeight.bold)),
               ),
               Text(
-                "Battery Level: $batteryLevel %",
-                style: const TextStyle(fontSize: 20),
+                "Battery Level: $batteryLevel%",
+                style: const TextStyle(fontSize: 22),
               ),
               Text(chargingstatus.toString(),
-                  style: const TextStyle(fontSize: 20)),
+                  style: const TextStyle(fontSize: 22)),
               displayNotifiers(),
             ],
           )
@@ -100,16 +100,15 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
             () => const AddNotifier(),
             transition: Transition.leftToRightWithFade,
           ),
-          notifierController.getNotifier(),
+          notifierController.getNotifiers(),
         },
         child: const Icon(Icons.add_comment_rounded),
       ),
     );
   }
 
-
   displayNotifiers() {
-    notifierController.getNotifier();
+    notifierController.getNotifiers();
     return Expanded(
       child: Obx(() {
         return ListView.builder(
@@ -117,7 +116,7 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
           itemBuilder: (_, index) {
             Notifier notifier = notifierController.notifierList[index];
             if (parseInt(batteryLevel) <
-                int.parse(notifier.level.toString()) && chargingstatus != ChargingStatus.Charging) {
+                parseInt(notifier.level.toString()) && chargingstatus != ChargingStatus.Charging) {
               notificationHelper.scheduledNotification(
                   notifier
               );  
@@ -182,7 +181,7 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
                   notifierController.deleteNotifier(notifier);
                   Get.back();
                 },
-                color: Color.fromARGB(255, 196, 8, 8),
+                color: Colors.redAccent.shade700,
                 context: context),
             const SizedBox(
               height: 20,
@@ -216,7 +215,7 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
         width: MediaQuery.of(context).size.height * 0.9,
         decoration: BoxDecoration(
           border: Border.all(
-            width: 2, color: isClose == true ? Colors.redAccent[700]! : color),
+            width: 2, color: isClose == true ? Colors.redAccent[400]! : color),
           borderRadius: BorderRadius.circular(12),
           color: isClose == true ? Colors.transparent : color, 
         ),

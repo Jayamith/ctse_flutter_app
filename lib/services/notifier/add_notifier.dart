@@ -16,8 +16,6 @@ class _AddNotifierState extends State<AddNotifier> {
       Get.put(BatteryNotifierController());
   int batteryLevel = 20;
   List<int> levelsList = [5, 10, 15, 20, 25, 30];
-  String _repeat = "Once";
-  List<String> repeatList = ["Once", "Daily"];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,6 +32,16 @@ class _AddNotifierState extends State<AddNotifier> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(
+                height: 20,
+              ),
+              const Text(
+                "Select the battery level to notify you when the battery is low",
+                style: TextStyle(fontSize: 26, fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
               Row(
                 children: [
                   Expanded(
@@ -99,40 +107,16 @@ class _AddNotifierState extends State<AddNotifier> {
                 ],
               ),
               const SizedBox(
-                height: 10,
-              ),
-              InputField(
-                title: "Repeat",
-                hint: _repeat,
-                widget: DropdownButton(
-                  icon: const Icon(Icons.keyboard_arrow_down_rounded),
-                  iconSize: 32,
-                  elevation: 6,
-                  underline: Container(
-                    height: 0,
-                  ),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _repeat = (newValue!);
-                    });
-                  },
-                  items:
-                      repeatList.map<DropdownMenuItem<String>>((String? value) {
-                    return DropdownMenuItem<String>(
-                        value: value, child: Text(value!));
-                  }).toList(),
-                ),
-              ),
-              const SizedBox(
                 height: 20,
               ),
               Center(
                 child: ElevatedButton(
                   onPressed: () {
                     _saveDataToDB();
+                    Get.back();
                   },
                   child: const Text(
-                    "Create",
+                    "Create Notifier",
                     style: TextStyle(color: Colors.black),
                   ),
                 ),
@@ -146,11 +130,11 @@ class _AddNotifierState extends State<AddNotifier> {
 
   _saveDataToDB() async {
     int value = await notifierController.addNotifier(
-        notifier: Notifier(
-      level: batteryLevel,
-      repeat: _repeat,
-      isCompleted: 0,
-    ));
-    print("My ID is " + "$value");
+      notifier: Notifier(
+        level: batteryLevel,
+        isCompleted: 0,
+      )
+    );
+    print("My ID is $value");
   }
 }

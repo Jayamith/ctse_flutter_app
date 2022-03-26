@@ -1,16 +1,15 @@
 import 'package:ctse_app_life_saviour/models/historyModel.dart';
 import 'package:ctse_app_life_saviour/models/reminder_model.dart';
+import 'package:ctse_app_life_saviour/models/notifier_model.dart';
 import 'package:get/state_manager.dart';
 import 'package:sqflite/sqflite.dart';
-
-import '../models/notifier_model.dart';
 
 class DBHelper {
   static Database? _database;
   static const int _version = 1;
   static const String _tableNameReminder = "reminders";
   static const String _tableNameHistory = "history";
-  static const String _tableNameNotifier = "notifier";
+  static const String _tableNameNotifier = "notifiers";
 
   static Future<void> initDb() async {
     if (_database != null) {
@@ -40,9 +39,8 @@ class DBHelper {
           db.execute(
             "CREATE TABLE $_tableNameNotifier("
             "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-            "level STRING, "
-            "isCompleted INTEGER, remindMe INTEGER, "
-            "repeat STRING)",
+            "level INTEGER, "
+            "isCompleted INTEGER)",
           );
         },
       );
@@ -89,18 +87,18 @@ class DBHelper {
   }
 
   static Future<int> insertNotifier(Notifier? notifier) async {
-    print('insert notifier function called');
+    print('insert function called');
     return await _database?.insert(_tableNameNotifier, notifier!.toJson()) ?? 1;
   }
 
-  static Future<List<Map<String, dynamic>>> getNotifier() async {
-    print('get notifiers function called');
+  static Future<List<Map<String, dynamic>>> getNotifiers() async {
+    print('get function called');
     return await _database!.query(_tableNameNotifier);
   }
 
   static updateNotifier(int id) async {
-    print('update notifier function called');
-    return await _database!.rawUpdate('''
+    print('update function called');
+    return await _database!.rawUpdate(''';
     UPDATE notifiers
     SET isCompleted = ?
     WHERE id = ?
@@ -108,7 +106,7 @@ class DBHelper {
   }
 
   static deleteNotifier(Notifier notifier) async {
-    print('delete notifier function called');
+    print('delete function called');
     return await _database!
         .delete(_tableNameNotifier, where: 'id=?', whereArgs: [notifier.id]);
   }

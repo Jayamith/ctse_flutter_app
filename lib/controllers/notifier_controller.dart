@@ -14,18 +14,19 @@ class BatteryNotifierController extends GetxController {
     return await DBHelper.insertNotifier(notifier);
   }
 
-  void getNotifier() async {
-    List<Map<String, dynamic>> notifiers = await DBHelper.getNotifier();
+  void getNotifiers() async {
+    List<Map<String, dynamic>> notifiers = await DBHelper.getNotifiers();
     notifierList
         .assignAll(notifiers.map((data) => Notifier.fromJson(data)).toList());
   }
 
   void updateNotifier(int id) async {
-    await DBHelper.update(id);
-    getNotifier();
+    await DBHelper.updateNotifier(id);
+    getNotifiers();
   }
 
   void deleteNotifier(Notifier notifier) {
     DBHelper.deleteNotifier(notifier);
+    getNotifiers();
   }
 }
