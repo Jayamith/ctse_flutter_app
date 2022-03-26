@@ -89,8 +89,8 @@ class _AddNotifierState extends State<AddNotifier> {
                           );
                         },
                         child: const Icon(
-                          Icons.battery_charging_full,
-                          color: Colors.blue,
+                          Icons.battery_alert,
+                          color: Colors.red,
                           size: 45,
                         ),
                       ),

@@ -22,7 +22,7 @@ class NotificationHelper {
             onDidReceiveLocalNotification: onDidReceiveLocalNotification);
 
     final AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings("Notifier");
+        AndroidInitializationSettings("notifier");
 
     final InitializationSettings initializationSettings =
         InitializationSettings(
