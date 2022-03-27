@@ -90,9 +90,11 @@ class DBHelper {
 
 
   static Future<int?> deleteHistory(int? id) async {
-    int? deletedId = await _database?.delete(_tableNameHistory, where: '${History.colId}=?', whereArgs: [id]);
+    int? deletedId = await _database?.delete(
+        _tableNameHistory, where: '${History.colId}=?', whereArgs: [id]);
     print('History deleted with ID:' + deletedId.toString());
     return deletedId;
+  }
 
   static Future<int> insertNotifier(Notifier? notifier) async {
     print('insert notifier function called');
