@@ -63,10 +63,16 @@ class DBHelper {
   }
 
   static Future<List<History>?> fetchHistory() async {
-    List<Map> histories = await _database!.query(_tableNameHistory);
+    List<Map> histories = await _database!.query(_tableNameHistory, orderBy: 'id DESC');
     print('History data retrieved:' + histories.length.toString());
     return histories.length == 0
         ? []
         : histories.map((e) => History.fromMap(e)).toList();
+  }
+
+  static Future<int?> deleteHistory(int? id) async {
+    int? deletedId = await _database?.delete(_tableNameHistory, where: '${History.colId}=?', whereArgs: [id]);
+    print('History deleted with ID:' + deletedId.toString());
+    return deletedId;
   }
 }
