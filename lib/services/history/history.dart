@@ -31,9 +31,8 @@ class _BatteryHistoryState extends State<BatteryHistory> {
           });
           // trigger
           if (state == BatteryState.charging) {
-            await Future.delayed(Duration(seconds: 1));
             int tmpLevel = await _battery.batteryLevel;
-            String tmpPluggedTime = DateTime.now().year.toString()+"-"+DateTime.now().month.toString()+"-"+DateTime.now().day.toString();
+            String tmpPluggedTime = DateTime.now().year.toString()+"-"+DateTime.now().month.toString()+"-"+DateTime.now().day.toString()+" at "+DateTime.now().hour.toString()+":"+DateTime.now().minute.toString();
             History history = History(level: tmpLevel.toString(), pluggedTime: tmpPluggedTime);
             _saveLevel(history);
             _refreshHistory();
@@ -54,6 +53,11 @@ class _BatteryHistoryState extends State<BatteryHistory> {
     });
   }
 
+  _clearAll() async {
+    await DBHelper.deleteAllHistory();
+    _refreshHistory();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,16 +68,40 @@ class _BatteryHistoryState extends State<BatteryHistory> {
             style: TextStyle(color: Colors.black),
           ),
         ),
-        backgroundColor: Colors.purple[100],
+        backgroundColor: Colors.blue,
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          children: [_list()],
+          children: [_list(), _button()],
         ),
       ),
     );
   }
+
+  _button() => Container(
+    color: Colors.white,
+    margin: EdgeInsets.fromLTRB(20, 5, 20, 5),
+    child: Form(
+      // key: _formKey,
+      child: Column(
+        children: <Widget>[
+          Container(
+            // margin: EdgeInsets.all(8.0),
+            child: ButtonTheme(
+              minWidth: double.infinity,
+              child: RaisedButton(
+                onPressed: () => _clearAll(),
+                child: Text('Clear All'),
+                color: Colors.red,
+                textColor: Colors.white,
+              ),
+            )
+          )
+        ],
+      ),
+    ),
+  );
 
   _list() => Expanded(
     child: Card(
@@ -90,13 +118,19 @@ class _BatteryHistoryState extends State<BatteryHistory> {
                     size: 40.0,
                   ),
                   title: Text(
-                    "${_historyList[index].level}",
+                    "${_historyList[index].level}%",
                     style: TextStyle(
                         color: Colors.blue, fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
                       "${_historyList[index].pluggedTime}"
                   ),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete_sweep, color: Colors.red,),
+                  onPressed: () async {
+                      await DBHelper.deleteHistory(_historyList[index].id);
+                      _refreshHistory();
+                  },),
                 ),
                 Divider(
                   height: 5.0,
