@@ -53,6 +53,11 @@ class _BatteryHistoryState extends State<BatteryHistory> {
     });
   }
 
+  _clearAll() async {
+    await DBHelper.deleteAllHistory();
+    _refreshHistory();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,11 +73,35 @@ class _BatteryHistoryState extends State<BatteryHistory> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          children: [_list()],
+          children: [_list(), _button()],
         ),
       ),
     );
   }
+
+  _button() => Container(
+    color: Colors.white,
+    margin: EdgeInsets.fromLTRB(20, 5, 20, 5),
+    child: Form(
+      // key: _formKey,
+      child: Column(
+        children: <Widget>[
+          Container(
+            // margin: EdgeInsets.all(8.0),
+            child: ButtonTheme(
+              minWidth: double.infinity,
+              child: RaisedButton(
+                onPressed: () => _clearAll(),
+                child: Text('Clear All'),
+                color: Colors.red,
+                textColor: Colors.white,
+              ),
+            )
+          )
+        ],
+      ),
+    ),
+  );
 
   _list() => Expanded(
     child: Card(
