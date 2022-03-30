@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'package:ctse_app_life_saviour/db/db_helper.dart';
 import 'package:ctse_app_life_saviour/models/notifier_model.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 
 class BatteryNotifier extends StatefulWidget {
   const BatteryNotifier({Key? key}) : super(key: key);
@@ -19,19 +19,11 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
   BatteryState? _batteryState;
   List<Notifier> _notifierList = [];
   StreamSubscription<BatteryState>? _batteryStateSubscription;
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
 
   @override
   void initState() {
     super.initState();
     _refreshNotifier();
-    final AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('icon');
-
-    final InitializationSettings initializationSettings =
-        InitializationSettings(
-            android: initializationSettingsAndroid, macOS: null);
 
     _batteryStateSubscription =
         _battery.onBatteryStateChanged.listen((BatteryState state) async {
@@ -41,23 +33,22 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
       if (state == BatteryState.discharging) {
         int currentLevel = await _battery.batteryLevel;
         if (currentLevel < 20) {
-          const AndroidNotificationDetails androidPlatformChannelSpecifics =
-          AndroidNotificationDetails('your channel id', 'your channel name',
-              channelDescription: 'your channel description',
-              importance: Importance.max,
-              priority: Priority.high, 
-              ticker: 'ticker');
-
-          const NotificationDetails platformChannelSpecifics =
-          NotificationDetails(android: androidPlatformChannelSpecifics);
-
-          await flutterLocalNotificationsPlugin.show(
-            0,
-            "Battery is Lower than 20%",
-            "Your Battery level is $currentLevel%. Please Connect your charger",
-            platformChannelSpecifics,
-            payload: 'data',
-          );
+          bool isallowed = await AwesomeNotifications().isNotificationAllowed();
+          if (!isallowed) {
+            //no permission of local notification
+            AwesomeNotifications().requestPermissionToSendNotifications();
+          } else {
+            //show notification
+            AwesomeNotifications().createNotification(
+                content: NotificationContent(
+              //simgple notification
+              id: 123,
+              channelKey: 'basic', //set configuration wuth key "basic"
+              title: 'Battery is Lower than 20%',
+              body:
+                  'Your Battery level is $currentLevel%. Please Connect your charger',
+            ));
+          }
           Notifier notifier = Notifier(level: currentLevel.toString());
           _saveNotifier(notifier);
           _refreshNotifier();
