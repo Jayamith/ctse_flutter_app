@@ -1,17 +1,11 @@
 import 'dart:async';
-import 'package:battery_info/enums/charging_status.dart';
-import 'package:ctse_app_life_saviour/controllers/notifier_controller.dart';
-import 'package:battery_info/battery_info_plugin.dart';
-import 'package:battery_info/model/android_battery_info.dart';
-import 'package:ctse_app_life_saviour/services/notifier/add_notifier.dart';
-import 'package:ctse_app_life_saviour/services/notifier/notifier_notification_service.dart';
+
+import 'package:battery_plus/battery_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
-import '../../models/notifier_model.dart';
-import 'single_notifier.dart';
+
+import 'package:ctse_app_life_saviour/db/db_helper.dart';
+import 'package:ctse_app_life_saviour/models/notifier_model.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class BatteryNotifier extends StatefulWidget {
   const BatteryNotifier({Key? key}) : super(key: key);
@@ -21,37 +15,71 @@ class BatteryNotifier extends StatefulWidget {
 }
 
 class _BatteryNotifierState extends State<BatteryNotifier> {
-  final notifierController = Get.put(BatteryNotifierController());
-  String batteryLevel = "";
-  ChargingStatus chargingstatus = ChargingStatus.Discharging;
-  var notificationHelper;
+  final Battery _battery = Battery();
+  BatteryState? _batteryState;
+  List<Notifier> _notifierList = [];
+  StreamSubscription<BatteryState>? _batteryStateSubscription;
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   @override
   void initState() {
     super.initState();
-    notificationHelper = NotificationHelper();
-    notificationHelper.initializeNotification();
-    notificationHelper.requestIOSPermissions();
+    _refreshNotifier();
+    final AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('icon');
 
-    AndroidBatteryInfo? infoandroid = AndroidBatteryInfo();
+    final InitializationSettings initializationSettings =
+        InitializationSettings(
+            android: initializationSettingsAndroid, macOS: null);
 
-    Future.delayed(Duration.zero, () async {
-      infoandroid = await BatteryInfoPlugin().androidBatteryInfo;
+    _batteryStateSubscription =
+        _battery.onBatteryStateChanged.listen((BatteryState state) async {
+      setState(() {
+        _batteryState = state;
+      });
+      if (state == BatteryState.discharging) {
+        int currentLevel = await _battery.batteryLevel;
+        if (currentLevel < 20) {
+          const AndroidNotificationDetails androidPlatformChannelSpecifics =
+          AndroidNotificationDetails('your channel id', 'your channel name',
+              channelDescription: 'your channel description',
+              importance: Importance.max,
+              priority: Priority.high,
+              ticker: 'ticker');
 
-      batteryLevel = infoandroid!.batteryLevel.toString();
-      chargingstatus = infoandroid!.chargingStatus!;
-      setState(() {});
+          const NotificationDetails platformChannelSpecifics =
+          NotificationDetails(android: androidPlatformChannelSpecifics);
+
+          await flutterLocalNotificationsPlugin.show(
+            0,
+            "Battery is Low",
+            "Your Battery level is $currentLevel%. Please Connect your charger",
+            platformChannelSpecifics,
+            payload: 'data',
+          );
+          Notifier notifier = Notifier(level: currentLevel.toString());
+          _saveNotifier(notifier);
+          _refreshNotifier();
+        }
+      } else {}
     });
+  }
 
-    BatteryInfoPlugin()
-        .androidBatteryInfoStream
-        .listen((AndroidBatteryInfo? batteryInfo) {
-      infoandroid = batteryInfo;
-      batteryLevel = infoandroid!.batteryLevel.toString();
-      chargingstatus = infoandroid!.chargingStatus!;
-      setState(() {});
+  _saveNotifier(Notifier notifier) async {
+    await DBHelper.insertNotifier(notifier);
+  }
+
+  _refreshNotifier() async {
+    List<Notifier>? notifiers = await DBHelper.fetchNotifier();
+    setState(() {
+      _notifierList = notifiers!;
     });
-    super.initState();
+  }
+
+  _clearAll() async {
+    await DBHelper.deleteAllNotifiers();
+    _refreshNotifier();
   }
 
   @override
@@ -66,182 +94,82 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
         ),
         backgroundColor: Colors.redAccent,
       ),
-      body: Container(
-          color: chargingstatus == ChargingStatus.Charging ||
-                  parseInt(batteryLevel) > 20
-              ? Colors.lightGreen
-              : Colors.red[900],
-          alignment: Alignment.center,
-          padding: const EdgeInsets.all(10),
-          margin: const EdgeInsets.all(10),
-          height: 120,
-          child: Column(
-            children: [
-              Text(
-                DateFormat.yMMMd().format(DateTime.now()),
-                style: GoogleFonts.poppins(
-                    textStyle: const TextStyle(
-                        fontSize: 26, fontWeight: FontWeight.bold)),
-              ),
-              Text(
-                "Battery Level: $batteryLevel%",
-                style: const TextStyle(fontSize: 22),
-              ),
-              Text(chargingstatus.toString(),
-                  style: const TextStyle(fontSize: 22)),
-              displayNotifiers(),
-            ],
-          )
-        ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'addNotifier',
-        onPressed: () async => {
-          await Get.to(
-            () => const AddNotifier(),
-            transition: Transition.leftToRightWithFade,
-          ),
-          notifierController.getNotifiers(),
-        },
-        child: const Icon(Icons.add_comment_rounded),
-      ),
-    );
-  }
-
-  displayNotifiers() {
-    notifierController.getNotifiers();
-    return Expanded(
-      child: Obx(() {
-        return ListView.builder(
-          itemCount: notifierController.notifierList.length,
-          itemBuilder: (_, index) {
-            Notifier notifier = notifierController.notifierList[index];
-            if (parseInt(batteryLevel) <
-                parseInt(notifier.level.toString()) && chargingstatus != ChargingStatus.Charging) {
-              notificationHelper.scheduledNotification(
-                  notifier
-              );  
-            }
-            return AnimationConfiguration.staggeredGrid(
-              position: index,
-              columnCount: notifierController.notifierList.length,
-              child: SlideAnimation(
-                child: FadeInAnimation(
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          displayBottomSheet(context, notifier);
-                        },
-                        child: SingleNoifier(notifier),
-                      )
-                    ],
-                  ),
-                )
-              ));
-          });
-      }),
-    );
-  }
-
-  displayBottomSheet(BuildContext context, notifier) {
-    Get.bottomSheet(
-      Container(
-        padding: const EdgeInsets.only(top: 5),
-        height: notifier.isCompleted == 1
-            ? MediaQuery.of(context).size.height * 0.25
-            : MediaQuery.of(context).size.height * 0.35,
-        color: Colors.white,
+      body: Center(
         child: Column(
-          children: [
-            Container(
-              height: 8,
-              width: 140,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: Colors.red[400],
-              ),
-            ),
-            const Spacer(),
-            notifier.isCompleted == 1
-              ? Container()
-              : displayBottomSheetButton(
-                  label: "Notifier Closed",
-                  onTap: () {
-                    notifierController.updateNotifier(notifier.id);
-                    Get.back();
-                  },
-                  color: Colors.yellowAccent,
-                  context: context),
-            const SizedBox(
-              height: 10,
-            ),
-            displayBottomSheetButton(
-                label: "Delete Notifier",
-                onTap: () {
-                  notifierController.deleteNotifier(notifier);
-                  Get.back();
-                },
-                color: Colors.redAccent.shade700,
-                context: context),
-            const SizedBox(
-              height: 20,
-            ),
-            displayBottomSheetButton(
-                label: "Close",
-                onTap: () {
-                  Get.back();
-                },
-                isClose: true,
-                color: Colors.black,
-                context: context), 
-          ],
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [_list(), _button()],
         ),
       ),
     );
   }
 
-  displayBottomSheetButton({
-    required String label,
-    required Function()? onTap,
-    required Color color,
-    bool isClose = false,
-    required BuildContext context,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 4),
-        height: 50,
-        width: MediaQuery.of(context).size.height * 0.9,
-        decoration: BoxDecoration(
-          border: Border.all(
-            width: 2, color: isClose == true ? Colors.redAccent[400]! : color),
-          borderRadius: BorderRadius.circular(12),
-          color: isClose == true ? Colors.transparent : color, 
-        ),
-        child: Center(
-          child: Text(
-            label,
-            style: isClose == true
-                ? GoogleFonts.poppins(
-                  textStyle: const TextStyle(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 20,
-                      color: Colors.black
-                  )
-                )
-                : GoogleFonts.poppins(
-                  textStyle: const TextStyle(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 20,
-                      color: Colors.black)),
-            ),
+  _button() => Container(
+        color: Colors.grey,
+        margin: const EdgeInsets.fromLTRB(20, 5, 20, 5),
+        child: Form(
+          child: Column(
+            children: <Widget>[
+              Container(
+                  child: ButtonTheme(
+                minWidth: double.infinity,
+                child: RaisedButton(
+                  onPressed: () => _clearAll(),
+                  child: const Text('Delete All'),
+                  color: Colors.redAccent,
+                  textColor: Colors.yellowAccent,
+                ),
+              ))
+            ],
           ),
-      ));
-  }
+        ),
+      );
 
-  parseInt(String batteryLevel) {
-    return parseInt(batteryLevel);
+  _list() => Expanded(
+        child: Card(
+            margin: const EdgeInsets.fromLTRB(20, 30, 20, 0),
+            child: ListView.builder(
+              padding: const EdgeInsets.all(8),
+              itemBuilder: (context, index) {
+                return Column(
+                  children: <Widget>[
+                    ListTile(
+                      leading: Icon(
+                        Icons.add_comment_rounded,
+                        color: Colors.red[400],
+                        size: 40.0,
+                      ),
+                      title: const Text(
+                        "Battery Level is low. Connect your charger",
+                        style: TextStyle(
+                            color: Colors.deepOrange,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text("${_notifierList[index].level}%"),
+                      trailing: IconButton(
+                        icon: Icon(
+                          Icons.delete_sweep,
+                          color: Colors.red[900],
+                        ),
+                        onPressed: () async {
+                          await DBHelper.deleteNotifier(
+                              _notifierList[index].id);
+                          _refreshNotifier();
+                        },
+                      ),
+                    ),
+                    const Divider(
+                      height: 5.0,
+                    )
+                  ],
+                );
+              },
+              itemCount: _notifierList.length,
+            )),
+      );
+
+  @override
+  void dispose() {
+    super.dispose();
+    _batteryStateSubscription?.cancel();
   }
 }
-
