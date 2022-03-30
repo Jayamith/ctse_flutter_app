@@ -1,9 +1,8 @@
 import 'package:ctse_app_life_saviour/models/historyModel.dart';
 import 'package:ctse_app_life_saviour/models/reminder_model.dart';
+import 'package:ctse_app_life_saviour/models/notifier_model.dart';
 import 'package:get/state_manager.dart';
 import 'package:sqflite/sqflite.dart';
-
-import '../models/notifier_model.dart';
 
 class DBHelper {
   static Database? _database;
@@ -37,13 +36,10 @@ class DBHelper {
           level TEXT,
           pluggedTime STRING
           )''');
-          db.execute(
-            "CREATE TABLE $_tableNameNotifier("
-            "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-            "level STRING, "
-            "isCompleted INTEGER, remindMe INTEGER, "
-            "repeat STRING)",
-          );
+          db.execute('''
+            CREATE TABLE $_tableNameNotifier(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            level INTEGER,)''');
         },
       );
     } catch (e) {
@@ -88,7 +84,6 @@ class DBHelper {
         : histories.map((e) => History.fromMap(e)).toList();
   }
 
-
   static Future<int?> deleteHistory(int? id) async {
     int? deletedId = await _database?.delete(
         _tableNameHistory, where: '${History.colId}=?', whereArgs: [id]);
@@ -102,29 +97,31 @@ class DBHelper {
     return deletedId;
   }
 
-  static Future<int> insertNotifier(Notifier? notifier) async {
-    print('insert notifier function called');
-    return await _database?.insert(_tableNameNotifier, notifier!.toJson()) ?? 1;
+  static Future<int?> insertNotifier(Notifier notifier) async {
+    int? id = await _database?.insert(_tableNameNotifier, notifier.toMap());
+    print('Notifier inserted with ID:' + id.toString());
+    return id;
   }
 
-  static Future<List<Map<String, dynamic>>> getNotifier() async {
-    print('get notifiers function called');
-    return await _database!.query(_tableNameNotifier);
+  static Future<List<Notifier>?> fetchNotifier() async {
+    List<Map> notifiers = await _database!.query(_tableNameNotifier, orderBy: 'id ASC');
+    print('Notifier data retrieved:' + notifiers.length.toString());
+    return notifiers.length == 0
+        ? []
+        : notifiers.map((e) => Notifier.fromMap(e)).toList();
   }
 
-  static updateNotifier(int id) async {
-    print('update notifier function called');
-    return await _database!.rawUpdate('''
-    UPDATE notifiers
-    SET isCompleted = ?
-    WHERE id = ?
-    ''', [1, id]);
+
+  static Future<int?> deleteNotifier(int? id) async {
+    int? deletedId = await _database?.delete(
+        _tableNameNotifier, where: '${Notifier.notifyId}=?', whereArgs: [id]);
+    print('Notifier deleted with ID:' + deletedId.toString());
+    return deletedId;
   }
 
-  static deleteNotifier(Notifier notifier) async {
-    print('delete notifier function called');
-    return await _database!
-        .delete(_tableNameNotifier, where: 'id=?', whereArgs: [notifier.id]);
-
+  static Future<int?> deleteAllNotifiers() async {
+    int? deletedId = await _database?.delete(_tableNameNotifier);
+    print('All notiifers deleted.');
+    return deletedId;
   }
 }
