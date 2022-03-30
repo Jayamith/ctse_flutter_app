@@ -45,7 +45,7 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
           AndroidNotificationDetails('your channel id', 'your channel name',
               channelDescription: 'your channel description',
               importance: Importance.max,
-              priority: Priority.high,
+              priority: Priority.high, 
               ticker: 'ticker');
 
           const NotificationDetails platformChannelSpecifics =
@@ -53,7 +53,7 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
 
           await flutterLocalNotificationsPlugin.show(
             0,
-            "Battery is Low",
+            "Battery is Lower than 20%",
             "Your Battery level is $currentLevel%. Please Connect your charger",
             platformChannelSpecifics,
             payload: 'data',
@@ -139,7 +139,7 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
                         size: 40.0,
                       ),
                       title: const Text(
-                        "Battery Level is low. Connect your charger",
+                        "Battery Level is lower than 20%. Connect your charger",
                         style: TextStyle(
                             color: Colors.deepOrange,
                             fontWeight: FontWeight.bold),
