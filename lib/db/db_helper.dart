@@ -39,7 +39,7 @@ class DBHelper {
           db.execute('''
             CREATE TABLE $_tableNameNotifier(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            level INTEGER,)''');
+            level TEXT)''');
         },
       );
     } catch (e) {
@@ -104,7 +104,7 @@ class DBHelper {
   }
 
   static Future<List<Notifier>?> fetchNotifier() async {
-    List<Map> notifiers = await _database!.query(_tableNameNotifier, orderBy: 'id ASC');
+    List<Map> notifiers = await _database!.query(_tableNameNotifier, orderBy: 'id DESC');
     print('Notifier data retrieved:' + notifiers.length.toString());
     return notifiers.length == 0
         ? []
