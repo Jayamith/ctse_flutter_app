@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:ctse_app_life_saviour/db/db_helper.dart';
 import 'package:ctse_app_life_saviour/models/notifier_model.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class BatteryNotifier extends StatefulWidget {
   const BatteryNotifier({Key? key}) : super(key: key);
@@ -15,6 +16,8 @@ class BatteryNotifier extends StatefulWidget {
 }
 
 class _BatteryNotifierState extends State<BatteryNotifier> {
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
   final Battery _battery = Battery();
   BatteryState? _batteryState;
   List<Notifier> _notifierList = [];
@@ -41,7 +44,7 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
             //show notification
             AwesomeNotifications().createNotification(
                 content: NotificationContent(
-              //simgple notification
+              //simple notification
               id: 123,
               channelKey: 'basic', //set configuration wuth key "basic"
               title: 'Battery is Lower than 20%',

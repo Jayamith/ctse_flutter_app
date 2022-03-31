@@ -11,7 +11,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   AwesomeNotifications().initialize(
      'resource://drawable/icon', 
-     [            // notification icon 
+     [   // notification icon 
         NotificationChannel(
             channelGroupKey: 'basic_test',
             channelKey: 'basic',
@@ -20,21 +20,7 @@ Future<void> main() async {
             channelShowBadge: true,
             importance: NotificationImportance.High,
             enableVibration: true,
-        ),
-
-        NotificationChannel(
-            channelGroupKey: 'image_test',
-            channelKey: 'image',
-            channelName: 'image notifications',
-            channelDescription: 'Notification channel for image tests',
-            defaultColor: Colors.redAccent,
-            ledColor: Colors.white,
-            channelShowBadge: true,
-            importance: NotificationImportance.High
         )
-
-        //add more notification type with different configuration
-
      ]
   );
   await DBHelper.initDb();
