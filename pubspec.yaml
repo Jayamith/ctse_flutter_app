@@ -27,7 +27,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  awesome_notifications: ^0.6.21
+  awesome_notifications: any
   battery: ^2.0.3
   battery_info: ^1.0.8
   battery_plus: ^2.1.3
