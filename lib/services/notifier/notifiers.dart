@@ -44,9 +44,9 @@ class _BatteryNotifierState extends State<BatteryNotifier> {
               //simple notification
               id: 123,
               channelKey: 'basic', //set configuration wuth key "basic"
-              title: 'Battery is Lower than 20%',
+              title: 'Battery Percentage is Lower than 20%',
               body:
-                  'Your Battery level is $currentLevel%. Please Connect your charger',
+                  'Your Battery level is $currentLevel%. Please Connect your charger now',
             ));
           }
           Notifier notifier = Notifier(level: currentLevel.toString());
