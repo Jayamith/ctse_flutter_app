@@ -1,3 +1,4 @@
+import 'package:expandable_bottom_bar/expandable_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -9,7 +10,8 @@ import '../services/reminder/reminder.dart';
 import 'dashboard_controller.dart';
 
 class DashBoard extends StatefulWidget {
-  const DashBoard({Key? key}) : super(key: key);
+  final Function callbackDispatcher;
+  const DashBoard(this.callbackDispatcher, {Key? key}) : super(key: key);
 
   @override
   State<DashBoard> createState() => _DashBoardState();
@@ -25,10 +27,11 @@ class _DashBoardState extends State<DashBoard> {
         body: SafeArea(
           child: IndexedStack(
             index: controller.selectedTab,
-            children: const [
+            children: [
               BatteryNotifier(),
               BatteryReminder(),
-              BatteryOptimizer(),
+              DefaultBottomBarController(
+                  child: BatteryOptimizer(widget.callbackDispatcher)),
               BatteryHistory(),
             ],
           ),
@@ -59,7 +62,7 @@ class _DashBoardState extends State<DashBoard> {
             BottomNavyBarItem(
               icon: const Icon(Icons.settings_brightness),
               title: const Text('Optimizer'),
-              activeColor: Colors.orange,
+              activeColor: Colors.blue,
               inactiveColor: _inactiveColor,
               textAlign: TextAlign.center,
             ),
