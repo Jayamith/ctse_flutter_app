@@ -15,7 +15,7 @@ class NotificationInfo extends StatefulWidget {
 class _NotificationInfoState extends State<NotificationInfo> {
   final Battery battery = Battery();
   int batteryPercentage = 100;
-  BatteryState? batteryState;
+  BatteryState batteryState = BatteryState.discharging;
   StreamSubscription<BatteryState>? batteryStreamSubscription;
 
   @override
@@ -29,12 +29,14 @@ class _NotificationInfoState extends State<NotificationInfo> {
     updateBatteryLevel();
   }
 
-  void listenBatteryState() => batteryStreamSubscription =
-          battery.onBatteryStateChanged.listen((BatteryState state) {
-        setState(() {
-          batteryState = state;
-        });
+  void listenBatteryState() async {
+    batteryStreamSubscription =
+        battery.onBatteryStateChanged.listen((BatteryState state) {
+      setState(() {
+        batteryState = state;
       });
+    });
+  }
 
   Future updateBatteryLevel() async {
     final bLevel = await battery.batteryLevel;
@@ -137,7 +139,7 @@ class _NotificationInfoState extends State<NotificationInfo> {
                 children: [
                   Expanded(
                     child: Text(
-                      "Battery Status : ${batteryState}",
+                      "Battery Status : ${batteryState.toString().split(".")[1]}",
                       style: batteryState == BatteryState.discharging
                           ? GoogleFonts.philosopher(
                               textStyle: const TextStyle(
