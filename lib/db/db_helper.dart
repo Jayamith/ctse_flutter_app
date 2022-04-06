@@ -1,3 +1,4 @@
+import 'package:ctse_app_life_saviour/models/appModel.dart';
 import 'package:ctse_app_life_saviour/models/historyModel.dart';
 import 'package:ctse_app_life_saviour/models/reminder_model.dart';
 import 'package:ctse_app_life_saviour/models/notifier_model.dart';
@@ -10,6 +11,7 @@ class DBHelper {
   static const String _tableNameReminder = "reminders";
   static const String _tableNameHistory = "history";
   static const String _tableNameNotifier = "notifier";
+  static const String _tableNameOptimizer = "apps";
 
   static Future<void> initDb() async {
     if (_database != null) {
@@ -40,6 +42,11 @@ class DBHelper {
             CREATE TABLE $_tableNameNotifier(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             level TEXT)''');
+          db.execute('''
+            CREATE TABLE $_tableNameOptimizer(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            appName STRING, 
+            duration STRING )''');
         },
       );
     } catch (e) {
@@ -123,5 +130,32 @@ class DBHelper {
     int? deletedId = await _database?.delete(_tableNameNotifier);
     print('All notiifers deleted.');
     return deletedId;
+  }
+
+  //inserts a new app
+  static Future<int> insertApp(App? app) async {
+    print('insert function called');
+    return await _database?.insert(_tableNameOptimizer,app!.toJson()) ?? 1;
+  }
+
+  //get all the app data
+  static Future<List<Map<String, dynamic>>> getAppData() async {
+    print('get function called');
+    return await _database!.query(_tableNameOptimizer);
+  }
+  //update an app by Id
+  static updateApp(int? id,String? duration) async {
+    print('update function called');
+    return await _database!.rawUpdate(''';
+    UPDATE apps
+    SET duration = ?
+    WHERE id = ?
+    ''', [duration, id]);
+  }
+
+  //Delete an app by id
+  static deleteApp(int id) async {
+    return await _database!
+        .delete(_tableNameOptimizer, where: 'id=?', whereArgs: [id]);
   }
 }
