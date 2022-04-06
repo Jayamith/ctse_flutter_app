@@ -19,7 +19,6 @@ class _AddReminderState extends State<AddReminder> {
       Get.put(BatteryReminderController());
   DateTime _selectedDate = DateTime.now();
   String _startTime = DateFormat("hh:mm a").format(DateTime.now()).toString();
-  String _endTime = "12:00 AM";
   int _remindTime = 50;
   List<int> remindList = [5, 10, 25, 50, 75, 90];
   String _repeat = "Once";
@@ -250,7 +249,6 @@ class _AddReminderState extends State<AddReminder> {
       repeat: _repeat,
       isCompleted: 0,
     ));
-    print("My ID is " + "$value");
   }
 
   _getSelectedDate() async {
@@ -273,10 +271,6 @@ class _AddReminderState extends State<AddReminder> {
     } else if (isStartTime == true) {
       setState(() {
         _startTime = _formattedTime;
-      });
-    } else if (isStartTime == false) {
-      setState(() {
-        _endTime = _formattedTime;
       });
     }
   }

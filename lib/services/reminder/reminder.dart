@@ -155,12 +155,10 @@ class _BatteryReminderState extends State<BatteryReminder> {
             itemCount: _reminderController.reminderList.length,
             itemBuilder: (_, index) {
               Reminder reminder = _reminderController.reminderList[index];
-              //print(reminder.toJson());
               if (reminder.repeat == 'Daily') {
                 DateTime date =
                     DateFormat.jm().parse(reminder.startTime.toString());
                 var formattedTime = DateFormat("HH:mm").format(date);
-                //print(formattedTime);
                 if (batteryPercentage <
                     int.parse(reminder.remindMe.toString())) {
                   notificationHelper.scheduledNotification(
@@ -185,8 +183,19 @@ class _BatteryReminderState extends State<BatteryReminder> {
                         ),
                       ),
                     ));
-              }
-              if (reminder.date == DateFormat.yMd().format(_selectedDate)) {
+              } else if (reminder.repeat == 'Once' &&
+                  reminder.date == DateFormat.yMd().format(_selectedDate)) {
+                DateTime date =
+                    DateFormat.jm().parse(reminder.startTime.toString());
+                var formattedTime = DateFormat("HH:mm").format(date);
+                //print(formattedTime);
+                if (batteryPercentage <
+                    int.parse(reminder.remindMe.toString())) {
+                  notificationHelper.scheduledNotification(
+                      int.parse(formattedTime.toString().split(":")[0]),
+                      int.parse(formattedTime.toString().split(":")[1]),
+                      reminder);
+                }
                 return AnimationConfiguration.staggeredGrid(
                     position: index,
                     columnCount: _reminderController.reminderList.length,

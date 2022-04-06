@@ -77,7 +77,8 @@ class DBHelper {
   }
 
   static Future<List<History>?> fetchHistory() async {
-    List<Map> histories = await _database!.query(_tableNameHistory, orderBy: 'id DESC');
+    List<Map> histories =
+        await _database!.query(_tableNameHistory, orderBy: 'id DESC');
     print('History data retrieved:' + histories.length.toString());
     return histories.length == 0
         ? []
@@ -85,8 +86,8 @@ class DBHelper {
   }
 
   static Future<int?> deleteHistory(int? id) async {
-    int? deletedId = await _database?.delete(
-        _tableNameHistory, where: '${History.colId}=?', whereArgs: [id]);
+    int? deletedId = await _database?.delete(_tableNameHistory,
+        where: '${History.colId}=?', whereArgs: [id]);
     print('History deleted with ID:' + deletedId.toString());
     return deletedId;
   }
@@ -104,17 +105,17 @@ class DBHelper {
   }
 
   static Future<List<Notifier>?> fetchNotifier() async {
-    List<Map> notifiers = await _database!.query(_tableNameNotifier, orderBy: 'id DESC');
+    List<Map> notifiers =
+        await _database!.query(_tableNameNotifier, orderBy: 'id DESC');
     print('Notifier data retrieved:' + notifiers.length.toString());
     return notifiers.length == 0
         ? []
         : notifiers.map((e) => Notifier.fromMap(e)).toList();
   }
 
-
   static Future<int?> deleteNotifier(int? id) async {
-    int? deletedId = await _database?.delete(
-        _tableNameNotifier, where: '${Notifier.notifyId}=?', whereArgs: [id]);
+    int? deletedId = await _database?.delete(_tableNameNotifier,
+        where: '${Notifier.notifyId}=?', whereArgs: [id]);
     print('Notifier deleted with ID:' + deletedId.toString());
     return deletedId;
   }
